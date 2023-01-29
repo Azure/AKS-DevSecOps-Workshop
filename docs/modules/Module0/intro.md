@@ -20,7 +20,7 @@ As a pre-requisite to this article, it is recommended to review the following ar
 
 ## Process flow
 
-![](RackMultipart20230129-1-jxc43t_html_ab44277cc9e87947.png)
+![AKS DevSecOps Architecture](../../assets/images/module0/aks-devsecops-architecture.png)
 
 Link to Visio -\> [devsecops-azure-aks.vsdx](https://microsoft.sharepoint.com/:u:/t/AzureArchitectureCenter/ESl-N0a8TAhHtKwF0NDB5jcBMs5aVDWCHw2xUyu6t4oMbA?e=mn0CuY)
 
@@ -48,23 +48,23 @@ Note: While this workshop explicitly references AKS, GitHub, the recommendations
 15. Open-Source tools such as OWASP (Open Web Application Security Project) ZAP can be used to do penetration testing for web applications and services.
 16. Defender for DevOps, a service available in Defender for Cloud, empowers security teams to manage DevOps security across multi-pipeline environments including GitHub and Azure DevOps.
 
-# Personas Overview and Responsibilities
+## Personas Overview and Responsibilities
 
 To manage the complexity of managing DevSecOps on Kubernetes based solution deployments, it is best to look at it in term of a separation of concerns. Which team in an enterprise environment should be concerned with what aspect of the deployment and what tools and processes should that team employ to best achieve their objectives. In this section we will be going over the common roles of developers, application operators (SRE - Site Reliability Engineers), cluster operators, and security teams
 
-## Developers
+### Developers
 
 Developers are responsible for writing the code that comprises the application. They are also responsible for committing their code to the designated code repository. One of the important responsibilities of developers also includes authoring and running scripts for automated testing to ensure their code actually works as intended and integrates seamlessly with the rest of the application. They are usually also responsible for defining and scripting the building of container images as part of the automation pipeline.
 
-## Application operators (site reliability engineers)
+### Application operators (site reliability engineers)
 
 Building applications on the cloud using containers and Kubernetes can simplify application development, deployment, and scalability. But these development approaches also create increasingly distributed environments that complicate administration. SRE builds solutions to automate oversight of large software systems. They serve as a bridge between development and Cluster operator teams and help establish and monitor service level objectives and error budgets. This way they help manage application deployments and often write Kubernetes manifest (YAML) files as well as ￼
 
-## Cluster operators
+### Cluster operators
 
 This team is responsible for configuring and managing the cluster infrastructure. They often use infrastructure as code (IaC) best practices and frameworks like [GitOps](https://learn.microsoft.com/en-us/azure/architecture/example-scenario/gitops-aks/gitops-blueprint-aks) to provision and maintain their clusters. They use various monitoring tools like Azure monitor container insights and Prometheus/Grafana to monitor overall cluster health. They are responsible for patching and cluster upgrades, permissions / RBAC, etc. on the cluster. In DevSecOps teams, they ensure that the clusters meet the security requirements of the team and work with the security team to create those standards.
 
-## Security team
+### Security team
 
 The security team is responsible for developing security standards and enforcing them. In some teams they may be responsible for creating and selecting Azure policy that will be enforced in the subscriptions and resource groups holding the clusters. They monitor security issues and together with the other teams, ensure that security is brought to the forefront of every step of the DevSecOps process.
 
@@ -72,7 +72,6 @@ The security team is responsible for developing security standards and enforcing
 
 Security controls are implemented in each phase of the software development life cycle (SDLC), this is a key proponent of a DevSecOps strategy and the shift-left approach.
 
-![](RackMultipart20230129-1-jxc43t_html_236fb2843352341d.png)
+![DevSecOps Lifecycle Phases](../../assets/images/module0/devsecops-lifycycle-phases.png)
 
 Link to diagram -\> [DevSecOps-stages - v2.vsdx](https://microsoft.sharepoint.com/:u:/t/AzureArchitectureCenter/EfDmqUmuBBhJiTjx91e-wmUBvFvo4n-R80VEqbYrAtUCrA?e=CKhFel)
-
