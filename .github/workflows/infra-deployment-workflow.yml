@@ -1,0 +1,42 @@
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'tools/deploy/module0/**'
+
+env:
+  CLUSTER_NAME: ${{ secrets.CLUSTER_NAME }}
+  CLUSTER_RESOURCE_GROUP: ${{ secrets.CLUSTER_RESOURCE_GROUP }}
+  NAMESPACE: ${{ secrets.NAMESPACE }}
+  APP_NAME: ${{ secrets.APP_NAME }}
+
+  name: Azure ARM
+permissions:
+  id-token: write # This is required for requesting the JWT
+  contents: read  # This is required for actions/checkout
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+
+      # Checkout code
+    - uses: actions/checkout@main
+
+      # Log into Azure
+    - uses: azure/login@v1
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        # creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      # Deploy Bicep file
+    - name: deploy
+      uses: azure/arm-deploy@v1
+      with:
+        subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        resourceGroupName: ${{ secrets.CLUSTER_RESOURCE_GROUP }}
+        template: ./aks.bicep
+        parameters: ./azuredeploy.parameters.json
+        failOnStdErr: false
