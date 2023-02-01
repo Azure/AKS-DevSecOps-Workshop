@@ -4,7 +4,8 @@ on:
       - main
     paths:
       - 'tools/deploy/module0/**'
-
+  
+  workflow_dispatch:
 env:
   CLUSTER_NAME: ${{ secrets.CLUSTER_NAME }}
   CLUSTER_RESOURCE_GROUP: ${{ secrets.CLUSTER_RESOURCE_GROUP }}
