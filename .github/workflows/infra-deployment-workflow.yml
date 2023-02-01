@@ -37,6 +37,6 @@ jobs:
       with:
         subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         resourceGroupName: ${{ secrets.CLUSTER_RESOURCE_GROUP }}
-        template: ./aks.bicep
-        parameters: ./azuredeploy.parameters.json
+        template: tools/deploy/module0/aks.bicep 
+        parameters: tools/deploy/module0/azuredeploy.parameters.json
         failOnStdErr: false
