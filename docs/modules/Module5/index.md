@@ -54,6 +54,46 @@ Within the Portal, navigate to the cluster.  Once inside the cluster, check out 
 
 Aside from the Cluster view within the Insights tab, you will find lists that desscribe your cluster's nodes, controllers and containers.  You will also find a tab dedicated to reports.  These data driven reports provide additional insight into your cluster nodes, resource utilization, networking, and billing.
 
+Now, let's take a moment and test Container Insights by applying some load to our cluster.
+
+First, let's deploy a simple web server to our cluster.  Let's do this work inside its own namespace:
+
+```
+kubectl create namespace containerinsightstest
+kubectl config set-context --current --namespace containerinsightstest
+```
+
+Next, let's add the web server and expose it to the outside world:
+
+```
+kubectl create deployment nginx --image=nginx
+kubectl create service loadbalancer nginx --tcp=80:80
+kubectl get service nginx
+```
+
+Run `kubectl get service nginx` until its output shows the EXTERNAL-IP move from <pending> to an IP address.  Note the IP address.
+
+Next, let's apply some load to the cluster:
+
+```
+SERVICEADDRESS=[REPLACE THIS VALUE WITH THE IP ADDRESS FROM ABOVE]
+
+for n in {1..10}; do
+   curl $SERVICEADDDRESS
+done
+```
+
+Within Container Insights, on the Containers tab, you will find an instance of our web server by its name, nginx.  Here, you can see details about this container, including a live stream of its logs and a history of its events.
+
+If you are able to drive enough load, you may also notice a change in Node CPU Utilization or Node Memory Utilization on the Cluster tab.
+
+Now, let's clean our cluster:
+
+```
+kubectl delete namespace
+kubectl config set-context --current --namespace default
+```
+
 Now that we have enabled Container Insights, let's go back and update our Bicep tempaltes in order to make sure our deployment process picks up the changes.
 
 First, add the Log Analytics workspace to the template:
