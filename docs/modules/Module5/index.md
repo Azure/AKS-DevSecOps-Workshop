@@ -76,7 +76,7 @@ resource workspace 'Microsoft.OperationalInsights/workspaces@2022-10-01' = {
 Next, adjust the AKS cluster and enable Container Insights:
 
 ```
-// Inside Cluster Definition; add the following as a child of Properties
+// Inside Cluster Definition; add the following as a child of properties
 
     addonProfiles: {
       omsAgent: {
