@@ -71,13 +71,12 @@ kubectl create service loadbalancer nginx --tcp=80:80
 kubectl get service nginx
 ```
 
-Run `kubectl get service nginx` until its output shows the EXTERNAL-IP move from <pending> to an IP address.  Note the IP address.
+Run `kubectl get service nginx` until its output shows the EXTERNAL-IP move from <pending> to an IP address.  
 
 Next, let's apply some load to the cluster:
 
 ```
-SERVICEADDRESS=[REPLACE THIS VALUE WITH THE IP ADDRESS FROM ABOVE]
-
+SERVICEADDRESS=$(kubectl get service nginx -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
 for n in {1..10}; do
    curl $SERVICEADDDRESS
 done
@@ -90,7 +89,7 @@ If you are able to drive enough load, you may also notice a change in Node CPU U
 Now, let's clean our cluster:
 
 ```
-kubectl delete namespace
+kubectl delete namespace containerinsightstest
 kubectl config set-context --current --namespace default
 ```
 
