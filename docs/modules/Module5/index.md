@@ -50,7 +50,7 @@ Now that Container Insights has been enabled, we can turn our attention to the A
 
 Within the Portal, navigate to the cluster.  Once inside the cluster, check out the Monitoring section of the menu system and open the Insights tab.  Here, you will be presented with a nice visualization of your cluster, showing node count, CPU, and memory utilization.  You'll also a graph showing the active pod count.  These views are dynamic.  You can change the time range, or even look at live data from the cluster.
 
-![Container Insights Dashboard](../../assets/images/module5/ContainerInsightsCluster.png)]
+![Container Insights Dashboard](../../assets/images/module5/ContainerInsightsCluster.png)
 
 Aside from the Cluster view within the Insights tab, you will find lists that desscribe your cluster's nodes, controllers and containers.  You will also find a tab dedicated to reports.  These data driven reports provide additional insight into your cluster nodes, resource utilization, networking, and billing.
 
