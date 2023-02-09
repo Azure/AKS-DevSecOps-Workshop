@@ -54,6 +54,39 @@ Within the Portal, navigate to the cluster.  Once inside the cluster, check out 
 
 Aside from the Cluster view within the Insights tab, you will find lists that desscribe your cluster's nodes, controllers and containers.  You will also find a tab dedicated to reports.  These data driven reports provide additional insight into your cluster nodes, resource utilization, networking, and billing.
 
+Now that we have enabled Container Insights, let's go back and update our Bicep tempaltes in order to make sure our deployment process picks up the changes.
+
+First, add the Log Analytics workspace to the template:
+
+```
+// Parameters...
+
+@description('Log Analytics Workspace name')
+param workspaceName string
+
+// Log Analytics Workspace Definition 
+resource workspace 'Microsoft.OperationalInsights/workspaces@2022-10-01' = {
+  name: workspaceName
+  location: location
+}
+
+// Cluster Definition...
+```
+
+Next, adjust the AKS cluster and enable Container Insights:
+
+```
+// Inside Cluster Definition; add the following as a child of Properties
+
+    addonProfiles: {
+      omsAgent: {
+        enabled: true
+        config: {
+          logAnalyticsWorkspaceResourceID: workspace.id
+        }
+      }
+```
+
 ## Defender for Containers
 
 ## Sentinel
