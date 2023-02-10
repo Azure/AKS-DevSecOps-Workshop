@@ -56,35 +56,34 @@ Aside from the Cluster view within the Insights tab, you will find lists that de
 
 Now, let's take a moment and test Container Insights by applying some load to our cluster.
 
-First, let's deploy a simple web server to our cluster.  Let's do this work inside its own namespace:
+First, let's create a namespace to hold our work.
 
 ```
 kubectl create namespace containerinsightstest
 kubectl config set-context --current --namespace containerinsightstest
 ```
 
-Next, let's add the web server and expose it to the outside world:
+Next, let's run an interactive bash Pod on the cluster:
 
 ```
-kubectl create deployment nginx --image=nginx
-kubectl create service loadbalancer nginx --tcp=80:80
-kubectl get service nginx
+kubectl run test-shell --rm -i --tty --image ubuntu -- bash
 ```
 
-Run `kubectl get service nginx` until its output shows the EXTERNAL-IP move from <pending> to an IP address.  
-
-Next, let's apply some load to the cluster:
+Now, within the test-shell Pod, update, install and run stress:
 
 ```
-SERVICEADDRESS=$(kubectl get service nginx -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
-for n in {1..10}; do
-   curl $SERVICEADDDRESS
-done
+apt update
+apt install stress
+stress -c 10
 ```
 
-Within Container Insights, on the Containers tab, you will find an instance of our web server by its name, nginx.  Here, you can see details about this container, including a live stream of its logs and a history of its events.
+The above commands will generate a sustained CPU spike in the cluster.  Return to Container Insights and view the Cluster tab.  Turn on Live updates and you should see the Node CPU Utilization graph jump as a result of the stress command.
 
-If you are able to drive enough load, you may also notice a change in Node CPU Utilization or Node Memory Utilization on the Cluster tab.
+Return to test-shell and type ctrl-c to terminate stress.  Then, exit the pod.
+
+```
+exit
+```
 
 Now, let's clean our cluster:
 
