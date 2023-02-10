@@ -79,6 +79,28 @@ stress -c 10
 
 The above commands will generate a sustained CPU spike in the cluster.  Return to Container Insights and view the Cluster tab.  Turn on Live updates and you should see the Node CPU Utilization graph jump as a result of the stress command.
 
+![Container Insights Dasboard](../../assets/images/module5/ContainerInsightsClusterNodeCPU.png)
+
+Next, change the view by clicking on the Nodes tab.  Here, you will see a summary of what's happening inside the cluster.  Notice that one of your nodes (The one running stress) should be much more busy than the others.
+
+![Container Insights Nodes Tab](../../assets//images/module5/ContainerInsightsClusterNodes.png)
+
+Find the node that appears to be the most busy in your cluster and expand its line item.  Here, you will see a list of the processes running on that node.  You should see our test-shell pod running stress at the top of this list.
+
+![Container Insights Node Details](../../assets/images/module5/ContainerInsightsClusterNodesProcesses.png)
+
+Next, change the view by clicking on the Containers tab.  Here, you will be presented with a list of containers running on the cluster.  Notice that our test-shell pod is at the top of the list.
+
+![Container Insights Containers Tab](../../assets/images/module5/ContainerInsightsClusterContainers.png)
+
+Select the test-shell container and you'll get a description of the container.
+
+![Container Insights Container Overview](../../assets/images/module5/ContainerInsightsClusterContainersOverview.png)
+
+Here, you can also see a live stream of the container console and events.
+
+![Container Insights Container Events](../../assets/images/module5/ContainerInsightsClusterContainersLiveEvents.png)
+
 Return to test-shell and type ctrl-c to terminate stress.  Then, exit the pod.
 
 ```
