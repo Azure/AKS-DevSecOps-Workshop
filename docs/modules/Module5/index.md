@@ -311,19 +311,28 @@ az aks enable-addons --resource-group $GROUP --name $CLUSTER --addons azure-poli
 
 ### Using Defender for Containers
 
-Now that Defender for Containers is enabled in our cluster, let's simulate a security alert.  Run the following command:
+1. Now that Defender for Containers is enabled in our cluster, let's simulate a security alert.  Run the following command:
 
 ```
 kubectl get pods --namespace=asc-alerttest-662jfi039n
 ```
 
-The above is a test command that is designed to trigger a test alert.  The following output is expected:
+2. The above is a test command that is designed to trigger a test alert.  The following output is expected:
 
 ```
 No resources found in asc-alerttest-662jfi039n namespace.
 ```
 
+3. Next, return to the Azure Portal, navigate to the cluster and click on the Defender for Cloud menu option.
 
+![Defender for Cloud Menu](../../assets/images/module5/DefenderForCloudMenu.png)
 
+4. Inside Defender for Cloud you will see a summary of Recommendations and Security Alerts for the Cluster.  It may take thirty minutes for our test alert to appear here in this view.
+
+![Defender for Cloud Recommendations and Security Alerts](../../assets/images/module5/DefenderForCloudRecommendationsAndAlerts.png)
+
+5. Within the Recommendations Section, you will find an actionable list of security recommendations for the cluster.  Click on one of the recommendations and you will be presented a view showing a description of the recommendation and instructions on how you can fix the associated issue.
+
+![Defender for Cloud Recommendation Details](../../assets/images/module5/DefenderForCloudRecommendationDetails.png)
 
 ## Sentinel
