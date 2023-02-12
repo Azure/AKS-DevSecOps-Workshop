@@ -143,7 +143,7 @@ az monitor diagnostic-settings create \
 rm diag.config
 ```
 
-### Updated Bicep Templates
+### Update Bicep Templates
 
 Now that we have enabled Container Insights, let's go back and update our Bicep tempaltes in order to make sure our deployment process picks up the changes.
 
@@ -189,25 +189,32 @@ Defender for Containers assists you with the three core aspects of container sec
 You can learn more by reading the [documentation](https://learn.microsoft.com/en-us/azure/defender-for-cloud/defender-for-containers-introduction), or watching this video from the Defender for Cloud in the Field video series: [Microsoft Defender for Containers](https://learn.microsoft.com/en-us/azure/defender-for-cloud/episode-three).
 
 ### Enable Defender for Containers
-To begin, open the Azure Portal and navigate to [Defender for Cloud](https://learn.microsoft.com/en-us/azure/defender-for-cloud/defender-for-cloud-introduction) - your Cloud Security Posture (CSPM) and Cloud Workload Protection Platform (CWPP).
+
+1. To begin, open the Azure Portal and navigate to [Defender for Cloud](https://learn.microsoft.com/en-us/azure/defender-for-cloud/defender-for-cloud-introduction) - your Cloud Security Posture (CSPM) and Cloud Workload Protection Platform (CWPP).
 
 ![Defender for Cloud](../../assets/images/module5/DefenderForCloud.png)
 
-The Defender for Cloud Overview tab will open and you'll find a dashboard describing your security posture, regulatory compliance, and more.  For now, turn your attention to the Management section of the navigation menu and click on Environment Settings.
+2. The Defender for Cloud Overview tab will open and you'll find a dashboard describing your security posture, regulatory compliance, and more.  For now, turn your attention to the Management section of the navigation menu and click on Environment Settings.
 
-From within the Environment Settings tab, you will be presented with an expandable list of your Azure Management Groups and their associated resources.  Find and open your Azure Subscription in this list.  You will be taken to a view that shows a list of all the Defender plans available to your subscription and their status.
+3. From within the Environment Settings tab, you will be presented with an expandable list of your Azure Management Groups and their associated resources.  Find and open your Azure Subscription in this list.  You will be taken to a view that shows a list of all the Defender plans available to your subscription and their status.
 
-If the Containers Plan is not enabled, enable it. 
+4. If the Containers Plan is not enabled, enable it. 
 
 ![Defender for Cloud - Toggle Enabled](../../assets/images//module5/DefenderForCloudPlansEnable.png)
 
-A Settings link will appear within the description of your Defender for Containers plan.  Click it.
+5. A Settings link will appear within the description of your Defender for Containers plan.  Click it.
 
 ![Defender for Cloud Settings](../../assets/images/module5/DefenderForCloudPlansSettings.png)
 
-Here, you have the ability to toggle automatic installation/application of Defender for Cloud components, such as the Defender DaemonSet and Azure Policy for Kubernetes.  For now, leave these settings as you found them - we will enable for our cluster using the CLI.
+6. Here, you have the ability to toggle automatic installation/application of Defender for Cloud components, such as the Defender DaemonSet and Azure Policy for Kubernetes.  If these items are disabled, enable them.  This will ensure any clusters you create in the future are automatically enrolled in the service.
 
-Return to your command line and issue the following commands:
+7. Now, let's use the CLI in order to check and see if our cluster is enrolled in Defender for Containers.  If not, we'll take steps to fix it.  Return to your command line and issue the following commands:
+
+```
+kubectl get pods -n kube-system
+```
+
+8. Check the output of this command for the Defender for Containers pods.  If everything is well, you should see a pod called `microsoft-defender-XXXX` in `Running` state.  If not, issue the following command and repeat the previous step to check the result:
 
 ```
 echo "{\"logAnalyticsWorkspaceResourceId\": \"$WORKSPACEID\"}">defender.config
@@ -215,21 +222,7 @@ az aks update --resource-group $GROUP --name $CLUSTER --enable-defender --defend
 rm defender.config
 ```
 
-Once the above commands have completed, check to make sure the Defender for Containers pods are running on the cluster:
-
-```
-kubectl get pods -n kube-system
-```
-
-When the profile is added, you should see a pod called `microsoft-defender-XXXX` in `Running` state.  It might take a few minutes for pods to be added.
-
-Next, let's enable Azure Policy for Kubernetes.  Once again, using the CLI, run the following command:
-
-```
-az aks enable-addons --resource-group $GROUP --name $CLUSTER --addons azure-policy 
-```
-
-Once completed, check the status of the command by ensuring both Azure Policy and Gatekeeper pods are running on the cluster:
+9.  Next, let's check Azure Policy for Kubernetes.  We'll start by checking our cluster for the presence of required pods:
 
 ```
 # check for azure-policy
@@ -239,13 +232,21 @@ kubectl get pods -n kube-system
 kubectl get pods -n gatekeeper-system
 ```
 
-Now, perform one last check to verify that the latest add-on is installed by running this command:
+10. The above output should show both Azure Policy and Gatekeeper pods are running.
+
+11. Next, verify that the Azure Policy add-on is installed by running this command:
 
 ```
 az aks show --resource-group $GROUP --name $CLUSTER --query addonProfiles.azurepolicy 
 ```
 
-Check to make sure the policy is enabled.
+12. If the previous command does not show Azure Policy, then issue the following command, wait a few minutes and then return to step 9 to make sure everything is well.
+
+```
+az aks enable-addons --resource-group $GROUP --name $CLUSTER --addons azure-policy 
+```
+
+### Using Defender for Containers
 
 Now that Defender for Containers is enabled in our cluster, let's simulate a security alert.  Run the following command:
 
