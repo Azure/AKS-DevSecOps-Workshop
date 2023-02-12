@@ -178,6 +178,69 @@ resource workspace 'Microsoft.OperationalInsights/workspaces@2022-10-01' = {
       }
 ```
 
+3. Finally, add in Diagnostics at the end of the template:
+
+```
+resource diag01 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
+    name: 'diag01'
+    scope: aks
+    properties: {
+        logs: [{
+            category: 'cluster-autoscaler'
+            enabled: true
+            retentionPolicy: {
+                days: 0
+                enabled: false
+            }
+        }, {
+            category: 'guard'
+            enabled: true
+            retentionPolicy: {
+                days: 0
+                enabled: false
+            }
+        }, {
+            category: 'kube-apiserver'
+            enabled: true
+            retentionPolicy: {
+                days: 0
+                enabled: false
+            }
+        },
+        {
+            category: 'kube-audit'
+            enabled: true
+            retentionPolicy: {
+                days: 0
+                enabled: false
+            } 
+        }, {
+            category: 'kube-audit-admin'
+            enabled: true
+            retentionPolicy: {
+                days: 0
+                enabled: false
+            }
+        }, {
+            category: 'kube-controller-manager'
+            enabled: true
+            retentionPolicy: {
+                days: 0
+                enabled: false
+            }
+        }, {
+            category: 'kube-scheduler'
+            enabled: true
+            retentionPolicy: {
+                days: 0
+                enabled: false
+            }
+        }]
+        workspaceId: workspace.id
+    }
+}
+```
+
 ## Defender for Containers
 Defender for Containers is a cloud-native solution that may be used to secure your containers, helping you to improve, monitor, and maintain the security of your clusters, containers, and their applications.
 
