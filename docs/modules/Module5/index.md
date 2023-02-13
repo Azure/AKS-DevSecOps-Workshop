@@ -7,239 +7,239 @@ Container Insights is a feature designed to monitor the performance of container
 ### Enable Container Insights
 Container Insights is designed to store its data in a [Log Analytics workspace](https://learn.microsoft.com/en-us/azure/azure-monitor/logs/log-analytics-workspace-overview).  You can let the enablement process create a Log Analytics workspace for this purpose, or if you already have a workspace, you can use that one.  See [Designing your Azure Monitor Logs deployment](https://learn.microsoft.com/en-us/azure/azure-monitor/logs/workspace-design) to learn more about best practices for Log Analytics.
 
-1. Here, let's begin by creating a Log Analytics workspace in order to support Container Insights.  Right now, we will do this using the Azure CLI.  Later, we will augment our Bicep templates in order to perform this same work.
+Here, let's begin by creating a Log Analytics workspace in order to support Container Insights.  Right now, we will do this using the Azure CLI.  Later, we will augment our Bicep templates in order to perform this same work.
 
- ```
- az monitor log-analytics workspace create --resource-group $GROUP --workspace-name $WORKSPACE
- WORKSPACEID=$(az monitor log-analytics workspace show --resource-group $GROUP --workspace-name $WORKSPACE --query id -o tsv)
- ```
+```
+az monitor log-analytics workspace create --resource-group $GROUP --workspace-name $WORKSPACE
+WORKSPACEID=$(az monitor log-analytics workspace show --resource-group $GROUP --workspace-name $WORKSPACE --query id -o tsv)
+```
 
-2. Now, let's augment our cluster and enable Container Insights.
+Now, let's augment our cluster and enable Container Insights.
 
- ```
- az aks enable-addons -a monitoring --resource-group $GROUP --name $CLUSTER --workspace-resource-id $WORKSPACEID
- ```
+```
+az aks enable-addons -a monitoring --resource-group $GROUP --name $CLUSTER --workspace-resource-id $WORKSPACEID
+```
 
-3. Let's verify that the Container Insights agent and solution were successfully deployed.  First, we'll verify the daemonset was deployed:
+Let's verify that the Container Insights agent and solution were successfully deployed.  First, we'll verify the daemonset was deployed:
 
- ```
- kubectl get daemonset ama-logs --namespace=kube-system
- ```
+```
+kubectl get daemonset ama-logs --namespace=kube-system
+```
 
-4. The output should resemble the following:
+The output should resemble the following:
 
- ```
- NAME       DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR   AGE
- ama-logs   3         3         3       3            3           <none>          45m
- ```
+```
+NAME       DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR   AGE
+ama-logs   3         3         3       3            3           <none>          45m
+```
 
-5. Next, we'll verify that the deployment was created:
+Next, we'll verify that the deployment was created:
 
- ```
- kubectl get deployment ama-logs-rs --namespace-kube-system
- ```
+```
+kubectl get deployment ama-logs-rs --namespace-kube-system
+```
 
-6. The output should resemble the following:
+The output should resemble the following:
 
- ```
- NAME          READY   UP-TO-DATE   AVAILABLE   AGE
- ama-logs-rs   1/1     1            1           47m
- ```
+```
+NAME          READY   UP-TO-DATE   AVAILABLE   AGE
+ama-logs-rs   1/1     1            1           47m
+```
 
 ### Using Container Insights
 
 Now that Container Insights has been enabled, we can turn our attention to the Azure Portal and see the results of our labor.  (It may take a few minutes for data to flow into the Log Analytics workspace.)
 
-1. Within the Portal, navigate to the cluster.  Once inside the cluster, check out the Monitoring section of the menu system and open the Insights tab.  Here, you will be presented with a nice visualization of your cluster, showing node count, CPU, and memory utilization.  You'll also a graph showing the active pod count.  These views are dynamic.  You can change the time range, or even look at live data from the cluster.
+Within the Portal, navigate to the cluster.  Once inside the cluster, check out the Monitoring section of the menu system and open the Insights tab.  Here, you will be presented with a nice visualization of your cluster, showing node count, CPU, and memory utilization.  You'll also a graph showing the active pod count.  These views are dynamic.  You can change the time range, or even look at live data from the cluster.
 
- ![Container Insights Dashboard](../../assets/images/module5/ContainerInsightsCluster.png)
+![Container Insights Dashboard](../../assets/images/module5/ContainerInsightsCluster.png)
 
  Aside from the Cluster view within the Insights tab, you will find lists that desscribe your cluster's nodes, controllers and containers.  You will also find a tab dedicated to reports.  These data driven reports provide additional insight into your cluster nodes, resource utilization, networking, and billing.
 
-2. Now, let's take a moment and test Container Insights by applying some load to our cluster.
+Now, let's take a moment and test Container Insights by applying some load to our cluster.
 
- First, let's create a namespace to hold our work.
+First, let's create a namespace to hold our work.
 
- ```
- kubectl create namespace containerinsightstest
- kubectl config set-context --current --namespace containerinsightstest
- ```
+```
+kubectl create namespace containerinsightstest
+kubectl config set-context --current --namespace containerinsightstest
+```
 
-3. Next, let's run an interactive bash Pod on the cluster:
+Next, let's run an interactive bash Pod on the cluster:
 
- ```
- kubectl run test-shell --rm -i --tty --image ubuntu -- bash
- ```
+```
+kubectl run test-shell --rm -i --tty --image ubuntu -- bash
+```
 
-4. Now, within the test-shell Pod, update, install and run stress:
+Now, within the test-shell Pod, update, install and run stress:
 
- ```
- apt update
- apt install stress
- stress -c 10
- ```
+```
+apt update
+apt install stress
+stress -c 10
+```
 
- The above commands will generate a sustained CPU spike in the cluster.  Return to Container Insights and view the Cluster tab.  Turn on Live updates and you should see the Node CPU Utilization graph jump as a result of the stress command.
+The above commands will generate a sustained CPU spike in the cluster.  Return to Container Insights and view the Cluster tab.  Turn on Live updates and you should see the Node CPU Utilization graph jump as a result of the stress command.
 
- ![Container Insights Dasboard](../../assets/images/module5/ContainerInsightsClusterNodeCPU.png)
+![Container Insights Dasboard](../../assets/images/module5/ContainerInsightsClusterNodeCPU.png)
 
-5. Next, change the view by clicking on the Nodes tab.  Here, you will see a summary of what's happening inside the cluster.  Notice that one of your nodes (The one running stress) should be much more busy than the others.
+Next, change the view by clicking on the Nodes tab.  Here, you will see a summary of what's happening inside the cluster.  Notice that one of your nodes (The one running stress) should be much more busy than the others.
 
- ![Container Insights Nodes Tab](../../assets//images/module5/ContainerInsightsClusterNodes.png)
+![Container Insights Nodes Tab](../../assets//images/module5/ContainerInsightsClusterNodes.png)
 
-6. Find the node that appears to be the most busy in your cluster and expand its line item.  Here, you will see a list of the processes running on that node.  You should see our test-shell pod running stress at the top of this list.
+Find the node that appears to be the most busy in your cluster and expand its line item.  Here, you will see a list of the processes running on that node.  You should see our test-shell pod running stress at the top of this list.
 
- ![Container Insights Node Details](../../assets/images/module5/ContainerInsightsClusterNodesProcesses.png)
+![Container Insights Node Details](../../assets/images/module5/ContainerInsightsClusterNodesProcesses.png)
 
-7. Next, change the view by clicking on the Containers tab.  Here, you will be presented with a list of containers running on the cluster.  Notice that our test-shell pod is at the top of the list.
+Next, change the view by clicking on the Containers tab.  Here, you will be presented with a list of containers running on the cluster.  Notice that our test-shell pod is at the top of the list.
 
- ![Container Insights Containers Tab](../../assets/images/module5/ContainerInsightsClusterContainers.png)
+![Container Insights Containers Tab](../../assets/images/module5/ContainerInsightsClusterContainers.png)
 
-8. Select the test-shell container and you'll get a description of the container.
+Select the test-shell container and you'll get a description of the container.
 
- ![Container Insights Container Overview](../../assets/images/module5/ContainerInsightsClusterContainersOverview.png)
+![Container Insights Container Overview](../../assets/images/module5/ContainerInsightsClusterContainersOverview.png)
 
-9. Here, you can also see a live stream of the container console and events.
+Here, you can also see a live stream of the container console and events.
 
- ![Container Insights Container Events](../../assets/images/module5/ContainerInsightsClusterContainersLiveEvents.png)
+![Container Insights Container Events](../../assets/images/module5/ContainerInsightsClusterContainersLiveEvents.png)
 
-10. Return to test-shell and type ctrl-c to terminate stress.  Then, exit the pod.
+Return to test-shell and type ctrl-c to terminate stress.  Then, exit the pod.
 
- ```
- exit
- ```
+```
+exit
+```
 
-11. Now, let's clean our cluster:
+Now, let's clean our cluster:
 
- ```
- kubectl delete namespace containerinsightstest
- kubectl config set-context --current --namespace default
- ```
+```
+kubectl delete namespace containerinsightstest
+kubectl config set-context --current --namespace default
+```
 
 ### Additional Diagnostics 
 
 Container Insights provides excellent visibility within our Kubernetes Clusters.  However, we can get even more visibility by streaming diagnostics data into the Azure Log Analytics workspace we just created.  AKS offers you the ability to stream many types of diagnostic data, including log data from various sources as well as performance metrics.
 
-1. Use the following CLI command to turn begin streaming select diagnostics data into Log Analytics
+Use the following CLI command to turn begin streaming select diagnostics data into Log Analytics
 
- ```
- CLUSTERID=$(az aks show --resource-group $GROUP --name $CLUSTER --query id -o tsv)
- echo '['>diag.config
- echo '{"category": "cluster-autoscaler", "enabled": true},'>>diag.config
- echo '{"category": "guard", "enabled" :true},'>>diag.config
- echo '{"category": "kube-apiserver", "enabled": true},'>>diag.config
- echo '{"category": "kube-audit", "enabled": true},'>>diag.config
- echo '{"category": "kube-audit-admin", "enabled": true},'>>diag.config
- echo '{"category": "kube-controller-manager", "enabled": true},'>>diag.config
- echo '{"category": "kube-scheduler", "enabled": true}'>>diag.config
- echo ']'>>diag.config
+```
+CLUSTERID=$(az aks show --resource-group $GROUP --name $CLUSTER --query id -o tsv)
+echo '['>diag.config
+echo '{"category": "cluster-autoscaler", "enabled": true},'>>diag.config
+echo '{"category": "guard", "enabled" :true},'>>diag.config
+echo '{"category": "kube-apiserver", "enabled": true},'>>diag.config
+echo '{"category": "kube-audit", "enabled": true},'>>diag.config
+echo '{"category": "kube-audit-admin", "enabled": true},'>>diag.config
+echo '{"category": "kube-controller-manager", "enabled": true},'>>diag.config
+echo '{"category": "kube-scheduler", "enabled": true}'>>diag.config
+echo ']'>>diag.config
 
- az monitor diagnostic-settings create \
- --name "diag01" \
- --resource "$CLUSTERID" \
- --workspace "$WORKSPACEID" \
- --logs @diag.config
+az monitor diagnostic-settings create \
+--name "diag01" \
+--resource "$CLUSTERID" \
+--workspace "$WORKSPACEID" \
+--logs @diag.config
 
- rm diag.config
- ```
+rm diag.config
+```
 
 ### Update Bicep Templates
 
 Now that we have enabled Container Insights, let's go back and update our Bicep tempaltes in order to make sure our deployment process picks up the changes.
 
-1. First, add the Log Analytics workspace to the template:
+First, add the Log Analytics workspace to the template:
 
- ```
- // Parameters...
+```
+// Parameters...
 
- @description('Log Analytics Workspace name')
- param workspaceName string
+@description('Log Analytics Workspace name')
+param workspaceName string
 
- // Log Analytics Workspace Definition 
- resource workspace 'Microsoft.OperationalInsights/workspaces@2022-10-01' = {
-   name: workspaceName
-   location: location
- }
+// Log Analytics Workspace Definition 
+resource workspace 'Microsoft.OperationalInsights/workspaces@2022-10-01' = {
+  name: workspaceName
+  location: location
+}
 
- // Cluster Definition...
- ```
+// Cluster Definition...
+```
 
-2. Next, adjust the AKS cluster and enable Container Insights:
+Next, adjust the AKS cluster and enable Container Insights:
 
- ```
- // Inside Cluster Definition; add the following to properties
+```
+// Inside Cluster Definition; add the following to properties
 
-     addonProfiles: {
-       omsAgent: {
-         enabled: true
-         config: {
-           logAnalyticsWorkspaceResourceID: workspace.id
-         }
-       }
- ```
+    addonProfiles: {
+      omsAgent: {
+        enabled: true
+        config: {
+          logAnalyticsWorkspaceResourceID: workspace.id
+        }
+      }
+```
 
-3. Finally, add in Diagnostics at the end of the template:
+Finally, add in Diagnostics at the end of the template:
 
- ```
- resource diag01 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
-     name: 'diag01'
-     scope: aks
-     properties: {
-         logs: [{
-             category: 'cluster-autoscaler'
-             enabled: true
-             retentionPolicy: {
-                 days: 0
-                 enabled: false
-             }
-         }, {
-             category: 'guard'
-             enabled: true
-             retentionPolicy: {
-                 days: 0
-                 enabled: false
-             }
-         }, {
-             category: 'kube-apiserver'
-             enabled: true
-             retentionPolicy: {
-                 days: 0
-                 enabled: false
-             }
-         },
-         {
-             category: 'kube-audit'
-             enabled: true
-             retentionPolicy: {
-                 days: 0
-                 enabled: false
-             } 
-         }, {
-             category: 'kube-audit-admin'
-             enabled: true
-             retentionPolicy: {
-                 days: 0
-                 enabled: false
-             }
-         }, {
-             category: 'kube-controller-manager'
-             enabled: true
-             retentionPolicy: {
-                 days: 0
-                 enabled: false
-             }
-         }, {
-             category: 'kube-scheduler'
-             enabled: true
-             retentionPolicy: {
-                 days: 0
-                 enabled: false
-             }
-         }]
-         workspaceId: workspace.id
-     }
- }
- ```
+```
+resource diag01 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
+    name: 'diag01'
+    scope: aks
+    properties: {
+        logs: [{
+            category: 'cluster-autoscaler'
+            enabled: true
+            retentionPolicy: {
+                days: 0
+                enabled: false
+            }
+        }, {
+            category: 'guard'
+            enabled: true
+            retentionPolicy: {
+                days: 0
+                enabled: false
+            }
+        }, {
+            category: 'kube-apiserver'
+            enabled: true
+            retentionPolicy: {
+                days: 0
+                enabled: false
+            }
+        },
+        {
+            category: 'kube-audit'
+            enabled: true
+            retentionPolicy: {
+                days: 0
+                enabled: false
+            } 
+        }, {
+            category: 'kube-audit-admin'
+            enabled: true
+            retentionPolicy: {
+                days: 0
+                enabled: false
+            }
+        }, {
+            category: 'kube-controller-manager'
+            enabled: true
+            retentionPolicy: {
+                days: 0
+                enabled: false
+            }
+        }, {
+            category: 'kube-scheduler'
+            enabled: true
+            retentionPolicy: {
+                days: 0
+                enabled: false
+            }
+        }]
+        workspaceId: workspace.id
+    }
+}
+```
 
 ## Defender for Containers
 Defender for Containers is a cloud-native solution that may be used to secure your containers, helping you to improve, monitor, and maintain the security of your clusters, containers, and their applications.
@@ -253,116 +253,123 @@ You can learn more by reading the [documentation](https://learn.microsoft.com/en
 
 ### Enable Defender for Containers
 
-1. To begin, open the Azure Portal and navigate to [Defender for Cloud](https://learn.microsoft.com/en-us/azure/defender-for-cloud/defender-for-cloud-introduction) - your Cloud Security Posture (CSPM) and Cloud Workload Protection Platform (CWPP).
+To begin, open the Azure Portal and navigate to [Defender for Cloud](https://learn.microsoft.com/en-us/azure/defender-for-cloud/defender-for-cloud-introduction) - your Cloud Security Posture (CSPM) and Cloud Workload Protection Platform (CWPP).
 
- ![Defender for Cloud](../../assets/images/module5/DefenderForCloud.png)
+![Defender for Cloud](../../assets/images/module5/DefenderForCloud.png)
 
-2. The Defender for Cloud Overview tab will open and you'll find a dashboard describing your security posture, regulatory compliance, and more.  For now, turn your attention to the Management section of the navigation menu and click on Environment Settings.
+The Defender for Cloud Overview tab will open and you'll find a dashboard describing your security posture, regulatory compliance, and more.  For now, turn your attention to the Management section of the navigation menu and click on Environment Settings.
 
-3. From within the Environment Settings tab, you will be presented with an expandable list of your Azure Management Groups and their associated resources.  Find and open your Azure Subscription in this list.  You will be taken to a view that shows a list of all the Defender plans available to your subscription and their status.
+From within the Environment Settings tab, you will be presented with an expandable list of your Azure Management Groups and their associated resources.  Find and open your Azure Subscription in this list.  You will be taken to a view that shows a list of all the Defender plans available to your subscription and their status.
 
-4. If the Containers Plan is not enabled, enable it. 
+If the Containers Plan is not enabled, enable it. 
 
- ![Defender for Cloud - Toggle Enabled](../../assets/images//module5/DefenderForCloudPlansEnable.png)
+![Defender for Cloud - Toggle Enabled](../../assets/images//module5/DefenderForCloudPlansEnable.png)
 
-5. A Settings link will appear within the description of your Defender for Containers plan.  Click it.
+A Settings link will appear within the description of your Defender for Containers plan.  Click it.
 
- ![Defender for Cloud Settings](../../assets/images/module5/DefenderForCloudPlansSettings.png)
+![Defender for Cloud Settings](../../assets/images/module5/DefenderForCloudPlansSettings.png)
 
-6. Here, you have the ability to toggle automatic installation/application of Defender for Cloud components, namely, the Defender DaemonSet and Azure Policy for Kubernetes.  If these items are disabled, enable them.  This will ensure any clusters you create in the future are automatically enrolled in the service.
+Here, you have the ability to toggle automatic installation/application of Defender for Cloud components, namely, the Defender DaemonSet and Azure Policy for Kubernetes.  If these items are disabled, enable them.  This will ensure any clusters you create in the future are automatically enrolled in the service.
 
- Note: the Defender profile uses a default Log Analytics workspace.  If you don't already have a default Log Analytics workspace, Defender for Cloud will create a new resource group and workspace for you when the profile is installed.  The default workspace is created based on your region.
+Note: the Defender profile uses a default Log Analytics workspace.  If you don't already have a default Log Analytics workspace, Defender for Cloud will create a new resource group and workspace for you when the profile is installed.  The default workspace is created based on your region.
 
- The naming convention for the default Log Analytics workspace and resource group is:
- - Workspace: DefaultWorkspace-[Subscription-ID]-[geo]
- - Resource Group: DefaultResourceGroup-[geo]
+The naming convention for the default Log Analytics workspace and resource group is:
+- Workspace: DefaultWorkspace-[Subscription-ID]-[geo]
+- Resource Group: DefaultResourceGroup-[geo]
 
- See [Assign a custom workspace](https://learn.microsoft.com/en-us/azure/defender-for-cloud/defender-for-containers-enable) for instructions on how to change the workspace.
+See [Assign a custom workspace](https://learn.microsoft.com/en-us/azure/defender-for-cloud/defender-for-containers-enable) for instructions on how to change the workspace.
 
-7. Now, let's use the CLI in order to check and see if our cluster is enrolled in Defender for Containers.  If not, we'll take steps to fix it.  Return to your command line and issue the following commands:
+Now, let's use the CLI in order to check and see if our cluster is enrolled in Defender for Containers.  If not, we'll take steps to fix it.  Return to your command line and issue the following commands:
 
- ```
- kubectl get pods -n kube-system
- ```
+```
+kubectl get pods -n kube-system
+```
 
-8. Check the output of this command for the Defender for Containers pods.  If everything is well, you should see a pod called `microsoft-defender-XXXX` in `Running` state.  If not, issue the following command and repeat the previous step to check the result:
+Check the output of this command for the Defender for Containers pods.  If everything is well, you should see a pod called `microsoft-defender-XXXX` in `Running` state.  If not, issue the following command and repeat the previous step to check the result:
 
- ```
- az aks update --resource-group $GROUP --name $CLUSTER --enable-defender
- ```
+```
+az aks update --resource-group $GROUP --name $CLUSTER --enable-defender
+```
 
-9.  Next, let's check Azure Policy for Kubernetes.  We'll start by checking our cluster for the presence of required pods:
-
- ```
- # check for azure-policy
- kubectl get pods -n kube-system
-
- # check for gatekeeper 
- kubectl get pods -n gatekeeper-system
- ```
-
-10. The above output should show both Azure Policy and Gatekeeper pods are running.
-
-11. Next, verify that the Azure Policy add-on is installed by running this command:
+Next, let's check Azure Policy for Kubernetes.  We'll start by checking our cluster for the presence of required pods:
 
  ```
- az aks show --resource-group $GROUP --name $CLUSTER --query addonProfiles.azurepolicy 
- ```
+# check for azure-policy
+kubectl get pods -n kube-system
 
-12. If the previous command does not show Azure Policy, then issue the following command, wait a few minutes and then return to step 9 to make sure everything is well.
+# check for gatekeeper 
+kubectl get pods -n gatekeeper-system
+```
 
- ```
- az aks enable-addons --resource-group $GROUP --name $CLUSTER --addons azure-policy 
- ```
+The above output should show both Azure Policy and Gatekeeper pods are running.
+
+Next, verify that the Azure Policy add-on is installed by running this command:
+
+```
+az aks show --resource-group $GROUP --name $CLUSTER --query addonProfiles.azurepolicy 
+```
+
+If the previous command does not show Azure Policy, then issue the following command, wait a few minutes and then return to step 9 to make sure everything is well.
+
+```
+az aks enable-addons --resource-group $GROUP --name $CLUSTER --addons azure-policy 
+```
 
 ### Using Defender for Containers
 
-1. Now that Defender for Containers is enabled in our cluster, let's simulate a security alert.  Run the following command:
+Now that Defender for Containers is enabled in our cluster, let's simulate a security alert.  Run the following command:
 
- ```
- kubectl get pods --namespace=asc-alerttest-662jfi039n
- ```
+```
+kubectl get pods --namespace=asc-alerttest-662jfi039n
+```
 
-2. The above is a test command that is designed to trigger a test alert.  The following output is expected:
+The above is a test command that is designed to trigger a test alert.  The following output is expected:
 
- ```
- No resources found in asc-alerttest-662jfi039n namespace.
- ```
+```
+No resources found in asc-alerttest-662jfi039n namespace.
+```
 
-3. Next, return to the Azure Portal, navigate to the cluster and click on the Defender for Cloud menu option.
+Next, return to the Azure Portal, navigate to the cluster and click on the Defender for Cloud menu option.
 
- ![Defender for Cloud Menu](../../assets/images/module5/DefenderForCloudMenu.png)
+![Defender for Cloud Menu](../../assets/images/module5/DefenderForCloudMenu.png)
 
-4. Inside Defender for Cloud you will see a summary of Recommendations and Security Alerts for the Cluster. 
+Inside Defender for Cloud you will see a summary of Recommendations and Security Alerts for the Cluster. 
 
- ![Defender for Cloud Recommendations and Security Alerts](../../assets/images/module5/DefenderForCloudRecommendationsAndAlertsBig.png)
+![Defender for Cloud Recommendations and Security Alerts](../../assets/images/module5/DefenderForCloudRecommendationsAndAlertsBig.png)
 
-5. Near the top of the screen, you will see that there is at least 1 security alert.  This alert will correspond to the `kubectl get pods` command we ran just a few steps ago.
+Near the top of the screen, you will see that there is at least 1 security alert.  This alert will correspond to the `kubectl get pods` command we ran just a few steps ago.
    
- ![Defender for Cloud Security Alerts](../../assets/images/module5/DefenderForCloudAlerts.png)
+![Defender for Cloud Security Alerts](../../assets/images/module5/DefenderForCloudAlerts.png)
 
-6. We can also test the Security Alerting facility by executing a test command within a running pod on our cluster.  Return to the command line and execute the following procedure to trigger another test alert:
+We can also test the Security Alerting facility by executing a test command within a running pod on our cluster.  Return to the command line and execute the following procedure to trigger another test alert:
    
- ```
- kubectl create namespace defendertest
- kubectl config set-context --current --namespace defendertest
- kubectl run test-shell --rm -i --tty --image ubuntu -- bash
+```
+kubectl create namespace defendertest
+kubectl config set-context --current --namespace defendertest
+kubectl run test-shell --rm -i --tty --image ubuntu -- bash
+```
 
-# inside test-shell
- cp /bin/echo ./asc_alerttest_662jfi039n
- ./asc_alerttest_662jfi039n testing eicar pipe
- exit
+Within test-shell:
 
- kubectl delete namespace defendertest
- kubectl config set-context --current --namespace default
- ```
+```
+cp /bin/echo ./asc_alerttest_662jfi039n
+./asc_alerttest_662jfi039n testing eicar pipe
+exit
+```
 
-7. Return to Defender for Cloud in the Azure Portal and monitor Security Alerts.  Within ten minutes, you will find a second alert that corresponds to this most recent test.
+Original console:
 
- ![Defender for Cloud Test Alert](../../assets/images/module5/DefenderForCloudPodAlert.png)
+```
+kubectl delete namespace defendertest
+kubectl config set-context --current --namespace default
+```
 
-8. Separate from the Security Alerting capabilities within Defender for Cloud, you can also check out the Recommendations Section.  Here, you will find an actionable list of security recommendations for the cluster.  Click on one of the recommendations and you will be presented a view showing a description of the recommendation and instructions on how you can fix the associated issue.
+Return to Defender for Cloud in the Azure Portal and monitor Security Alerts.  Within ten minutes, you will find a second alert that corresponds to this most recent test.
 
- ![Defender for Cloud Recommendation Details](../../assets/images/module5/DefenderForCloudRecommendationDetails.png)
+![Defender for Cloud Test Alert](../../assets/images/module5/DefenderForCloudPodAlert.png)
+
+Separate from the Security Alerting capabilities within Defender for Cloud, you can also check out the Recommendations Section.  Here, you will find an actionable list of security recommendations for the cluster.  Click on one of the recommendations and you will be presented a view showing a description of the recommendation and instructions on how you can fix the associated issue.
+
+![Defender for Cloud Recommendation Details](../../assets/images/module5/DefenderForCloudRecommendationDetails.png)
 
 ## Sentinel
