@@ -269,7 +269,15 @@ You can learn more by reading the [documentation](https://learn.microsoft.com/en
 
 ![Defender for Cloud Settings](../../assets/images/module5/DefenderForCloudPlansSettings.png)
 
-6. Here, you have the ability to toggle automatic installation/application of Defender for Cloud components, such as the Defender DaemonSet and Azure Policy for Kubernetes.  If these items are disabled, enable them.  This will ensure any clusters you create in the future are automatically enrolled in the service.
+6. Here, you have the ability to toggle automatic installation/application of Defender for Cloud components, namely, the Defender DaemonSet and Azure Policy for Kubernetes.  If these items are disabled, enable them.  This will ensure any clusters you create in the future are automatically enrolled in the service.
+
+Note: the Defender profile uses a default Log Analytics workspace.  If you don't already have a default Log Analytics workspace, Defender for Cloud will create a new resource group and workspace for you when the profile is installed.  The default workspace is created based on your region.
+
+The naming convention for the default Log Analytics workspace and resource group is:
+- Workspace: DefaultWorkspace-[Subscription-ID]-[geo]
+- Resource Group: DefaultResourceGroup-[geo]
+
+See [Assign a custom workspace](https://learn.microsoft.com/en-us/azure/defender-for-cloud/defender-for-containers-enable) for instructions on how to change the workspace.
 
 7. Now, let's use the CLI in order to check and see if our cluster is enrolled in Defender for Containers.  If not, we'll take steps to fix it.  Return to your command line and issue the following commands:
 
@@ -280,9 +288,7 @@ kubectl get pods -n kube-system
 8. Check the output of this command for the Defender for Containers pods.  If everything is well, you should see a pod called `microsoft-defender-XXXX` in `Running` state.  If not, issue the following command and repeat the previous step to check the result:
 
 ```
-echo "{\"logAnalyticsWorkspaceResourceId\": \"$WORKSPACEID\"}">defender.config
-az aks update --resource-group $GROUP --name $CLUSTER --enable-defender --defender-config ./defender.config
-rm defender.config
+az aks update --resource-group $GROUP --name $CLUSTER --enable-defender
 ```
 
 9.  Next, let's check Azure Policy for Kubernetes.  We'll start by checking our cluster for the presence of required pods:
@@ -327,11 +333,35 @@ No resources found in asc-alerttest-662jfi039n namespace.
 
 ![Defender for Cloud Menu](../../assets/images/module5/DefenderForCloudMenu.png)
 
-4. Inside Defender for Cloud you will see a summary of Recommendations and Security Alerts for the Cluster.  It may take thirty minutes for our test alert to appear here in this view.
+4. Inside Defender for Cloud you will see a summary of Recommendations and Security Alerts for the Cluster. 
 
-![Defender for Cloud Recommendations and Security Alerts](../../assets/images/module5/DefenderForCloudRecommendationsAndAlerts.png)
+![Defender for Cloud Recommendations and Security Alerts](../../assets/images/module5/DefenderForCloudRecommendationsAndAlertsBig.png)
 
-5. Within the Recommendations Section, you will find an actionable list of security recommendations for the cluster.  Click on one of the recommendations and you will be presented a view showing a description of the recommendation and instructions on how you can fix the associated issue.
+5. Near the top of the screen, you will see that there is at least 1 security alert.  This alert will correspond to the `kubectl get pods` command we ran just a few steps ago.
+   
+![Defender for Cloud Security Alerts](../../assets/images/module5/DefenderForCloudAlerts.png)
+
+6. We can also test the Security Alerting facility by executing a test command within a running pod on our cluster.  Return to the command line and execute the following procedure to trigger another test alert:
+   
+```
+kubectl create namespace defendertest
+kubectl config set-context --current --namespace defendertest
+kubectl run test-shell --rm -i --tty --image ubuntu -- bash
+
+# inside test-shell
+cp /bin/echo ./asc_alerttest_662jfi039n
+./asc_alerttest_662jfi039n testing eicar pipe
+exit
+
+kubectl delete namespace defendertest
+kubectl config set-context --current --namespace default
+```
+
+7. Return to Defender for Cloud in the Azure Portal and monitor Security Alerts.  Within ten minutes, you will find a second alert that corresponds to this most recent test.
+
+![Defender for Cloud Test Alert](../../assets/images/module5/DefenderForCloudAlert.png)
+
+8. Separate from the Security Alerting capabilities within Defender for Cloud, you can also check out the Recommendations Section.  Here, you will find an actionable list of security recommendations for the cluster.  Click on one of the recommendations and you will be presented a view showing a description of the recommendation and instructions on how you can fix the associated issue.
 
 ![Defender for Cloud Recommendation Details](../../assets/images/module5/DefenderForCloudRecommendationDetails.png)
 
