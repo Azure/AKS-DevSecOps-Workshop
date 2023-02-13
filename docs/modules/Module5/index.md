@@ -359,7 +359,7 @@ kubectl config set-context --current --namespace default
 
 7. Return to Defender for Cloud in the Azure Portal and monitor Security Alerts.  Within ten minutes, you will find a second alert that corresponds to this most recent test.
 
-![Defender for Cloud Test Alert](../../assets/images/module5/DefenderForCloudAlert.png)
+![Defender for Cloud Test Alert](../../assets/images/module5/DefenderForCloudAlerts.png)
 
 8. Separate from the Security Alerting capabilities within Defender for Cloud, you can also check out the Recommendations Section.  Here, you will find an actionable list of security recommendations for the cluster.  Click on one of the recommendations and you will be presented a view showing a description of the recommendation and instructions on how you can fix the associated issue.
 
