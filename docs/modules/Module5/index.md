@@ -249,7 +249,7 @@ Defender for Containers assists you with the three core aspects of container sec
 - Vulnerability assessment - tools to manage and assess images stored in container registries and running in Azure Kubernetes Service
 - Run-time theat protection for nodes and clusters - threat protection for clusters and Linux nodes generates security alerts for suspicious activities
 
-You can learn more by reading the [documentation](https://learn.microsoft.com/en-us/azure/defender-for-cloud/defender-for-containers-introduction), or watching this video from the Defender for Cloud in the Field video series: [Microsoft Defender for Containers](https://learn.microsoft.com/en-us/azure/defender-for-cloud/episode-three).
+> You can learn more by reading the [documentation](https://learn.microsoft.com/en-us/azure/defender-for-cloud/defender-for-containers-introduction), or watching this video from the Defender for Cloud in the Field video series: [Microsoft Defender for Containers](https://learn.microsoft.com/en-us/azure/defender-for-cloud/episode-three).
 
 ### Enable Defender for Containers
 
@@ -285,7 +285,20 @@ Now, let's use the CLI in order to check and see if our cluster is enrolled in D
 kubectl get pods -n kube-system
 ```
 
-Check the output of this command for the Defender for Containers pods.  If everything is well, you should see a pod called `microsoft-defender-XXXX` in `Running` state.  If not, issue the following command and repeat the previous step to check the result:
+Check the output of this command.  You should see two Defender profile components in the output:
+- microsoft-defender-collector-ds-* - this is a set of containers that focus on collecting inventory and security events from the Kubernetes environment
+- microsoft-defneder-publisher-ds-* - this set of containers publish the collected data to the Microsoft Defender for Containers backend service where the data will be processed and analyzed.
+
+You may also be interested to see the associated deployment:
+
+```
+kubectl get deployment -n kube-system
+```
+
+The above should include:
+- microsoft-defender-collector-misc
+
+If, for some reason, the above components are not present on your cluster, you may install them by issuing the following command.  Then, return to the previous verification steps to make sure everything is in order.
 
 ```
 az aks update --resource-group $GROUP --name $CLUSTER --enable-defender
@@ -309,7 +322,7 @@ Next, verify that the Azure Policy add-on is installed by running this command:
 az aks show --resource-group $GROUP --name $CLUSTER --query addonProfiles.azurepolicy 
 ```
 
-If the previous command does not show Azure Policy, then issue the following command, wait a few minutes and then return to step 9 to make sure everything is well.
+If the previous command does not show Azure Policy, then issue the following command, wait a few minutes and then return to the previous verification step to make sure everything is well.
 
 ```
 az aks enable-addons --resource-group $GROUP --name $CLUSTER --addons azure-policy 
