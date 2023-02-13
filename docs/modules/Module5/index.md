@@ -296,7 +296,7 @@ kubectl get deployment -n kube-system
 ```
 
 The above should include:
-- microsoft-defender-collector-misc
+- microsoft-defender-collector-misc-*
 
 If, for some reason, the above components are not present on your cluster, you may install them by issuing the following command.  Then, return to the previous verification steps to make sure everything is in order.
 
