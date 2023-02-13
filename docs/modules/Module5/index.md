@@ -9,42 +9,42 @@ Container Insights is designed to store its data in a [Log Analytics workspace](
 
 1. Here, let's begin by creating a Log Analytics workspace in order to support Container Insights.  Right now, we will do this using the Azure CLI.  Later, we will augment our Bicep templates in order to perform this same work.
 
-```
-az monitor log-analytics workspace create --resource-group $GROUP --workspace-name $WORKSPACE
-WORKSPACEID=$(az monitor log-analytics workspace show --resource-group $GROUP --workspace-name $WORKSPACE --query id -o tsv)
-```
+ ```
+ az monitor log-analytics workspace create --resource-group $GROUP --workspace-name $WORKSPACE
+ WORKSPACEID=$(az monitor log-analytics workspace show --resource-group $GROUP --workspace-name $WORKSPACE --query id -o tsv)
+ ```
 
 2. Now, let's augment our cluster and enable Container Insights.
 
-```
-az aks enable-addons -a monitoring --resource-group $GROUP --name $CLUSTER --workspace-resource-id $WORKSPACEID
-```
+ ```
+ az aks enable-addons -a monitoring --resource-group $GROUP --name $CLUSTER --workspace-resource-id $WORKSPACEID
+ ```
 
 3. Let's verify that the Container Insights agent and solution were successfully deployed.  First, we'll verify the daemonset was deployed:
 
-```
-kubectl get daemonset ama-logs --namespace=kube-system
-```
+ ```
+ kubectl get daemonset ama-logs --namespace=kube-system
+ ```
 
 4. The output should resemble the following:
 
-```
-NAME       DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR   AGE
-ama-logs   3         3         3       3            3           <none>          45m
-```
+ ```
+ NAME       DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR   AGE
+ ama-logs   3         3         3       3            3           <none>          45m
+ ```
 
 5. Next, we'll verify that the deployment was created:
 
-```
-kubectl get deployment ama-logs-rs --namespace-kube-system
-```
+ ```
+ kubectl get deployment ama-logs-rs --namespace-kube-system
+ ```
 
 6. The output should resemble the following:
 
-```
-NAME          READY   UP-TO-DATE   AVAILABLE   AGE
-ama-logs-rs   1/1     1            1           47m
-```
+ ```
+ NAME          READY   UP-TO-DATE   AVAILABLE   AGE
+ ama-logs-rs   1/1     1            1           47m
+ ```
 
 ### Using Container Insights
 
