@@ -463,6 +463,8 @@ Return to Defender for Cloud in the Azure Portal and monitor Security Alerts.  W
 
 ![Defender for Cloud Test Alert](../../assets/images/module5/DefenderForCloudPodAlert.png)
 
+### Update Bicep Templates
+
 Finally, let's adjust the cluster's Bicep template in order to reflect these changes:
 
 ```
