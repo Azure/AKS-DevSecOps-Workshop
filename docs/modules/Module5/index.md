@@ -54,7 +54,7 @@ Within the Portal, navigate to the cluster.  Once inside the cluster, check out 
 
 ![Container Insights Dashboard](../../assets/images/module5/ContainerInsightsCluster.png)
 
- Aside from the Cluster view within the Insights tab, you will find lists that desscribe your cluster's nodes, controllers and containers.  You will also find a tab dedicated to reports.  These data driven reports provide additional insight into your cluster nodes, resource utilization, networking, and billing.
+> Aside from the Cluster view within the Insights tab, you will find lists that desscribe your cluster's nodes, controllers and containers.  You will also find a tab dedicated to reports.  These data driven reports provide additional insight into your cluster nodes, resource utilization, networking, and billing.
 
 Now, let's take a moment and test Container Insights by applying some load to our cluster.
 
@@ -169,13 +169,16 @@ Next, adjust the AKS cluster and enable Container Insights:
 ```
 // Inside Cluster Definition; add the following to properties
 
-    addonProfiles: {
-      omsAgent: {
+addonProfiles: {
+    omsAgent: {
         enabled: true
         config: {
-          logAnalyticsWorkspaceResourceID: workspace.id
+            logAnalyticsWorkspaceResourceID: workspace.id
         }
-      }
+    }
+
+    // ...
+}
 ```
 
 Finally, add in Diagnostics at the end of the template:
@@ -271,13 +274,13 @@ A Settings link will appear within the description of your Defender for Containe
 
 Here, you have the ability to toggle automatic installation/application of Defender for Cloud components, namely, the Defender DaemonSet and Azure Policy for Kubernetes.  If these items are disabled, enable them.  This will ensure any clusters you create in the future are automatically enrolled in the service.
 
-Note: the Defender profile uses a default Log Analytics workspace.  If you don't already have a default Log Analytics workspace, Defender for Cloud will create a new resource group and workspace for you when the profile is installed.  The default workspace is created based on your region.
+> Note: the Defender profile uses a default Log Analytics workspace.  If you don't already have a default Log Analytics workspace, Defender for Cloud will create a new resource group and workspace for you when the profile is installed.  The default workspace is created based on your region.
 
-The naming convention for the default Log Analytics workspace and resource group is:
+> The naming convention for the default Log Analytics workspace and resource group is:
 - Workspace: DefaultWorkspace-[Subscription-ID]-[geo]
 - Resource Group: DefaultResourceGroup-[geo]
 
-See [Assign a custom workspace](https://learn.microsoft.com/en-us/azure/defender-for-cloud/defender-for-containers-enable) for instructions on how to change the workspace.
+> See [Assign a custom workspace](https://learn.microsoft.com/en-us/azure/defender-for-cloud/defender-for-containers-enable) for instructions on how to change the workspace.
 
 Now, let's use the CLI in order to check and see if our cluster is enrolled in Defender for Containers.  If not, we'll take steps to fix it.  Return to your command line and issue the following commands:
 
@@ -381,7 +384,9 @@ Return to Defender for Cloud in the Azure Portal and monitor Security Alerts.  W
 
 ![Defender for Cloud Test Alert](../../assets/images/module5/DefenderForCloudPodAlert.png)
 
-Separate from the Security Alerting capabilities within Defender for Cloud, you can also check out the Recommendations Section.  Here, you will find an actionable list of security recommendations for the cluster.  Click on one of the recommendations and you will be presented a view showing a description of the recommendation and instructions on how you can fix the associated issue.
+Separate from the Security Alerting capabilities within Defender for Cloud, you can also check out the Recommendations Section.  These are based on Azure Policy - recall installing Azure Policy for Kubernetes above.  
+
+You will find an actionable list of security recommendations for the cluster.  Click on one of the recommendations and you will be presented a view showing a description of the recommendation and instructions on how you can fix the associated issue.
 
 ![Defender for Cloud Recommendation Details](../../assets/images/module5/DefenderForCloudRecommendationDetails.png)
 
