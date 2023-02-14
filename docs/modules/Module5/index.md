@@ -81,7 +81,7 @@ stress -c 10
 
 The above commands will generate a sustained CPU spike in the cluster.  Return to Container Insights and view the Cluster tab.  Turn on Live updates and you should see the Node CPU Utilization graph jump as a result of the stress command.
 
-![Container Insights Dasboard](../../assets/images/module5/ContainerInsightsClusterNodeCPU.png)
+<img alt="Container Insights Dashboard" src="../../assets/images/module5/ContainerInsightsClusterNodeCPU.png" height="200px">
 
 Next, change the view by clicking on the Nodes tab.  Here, you will see a summary of what's happening inside the cluster.  Notice that one of your nodes (The one running stress) should be much more busy than the others.
 
