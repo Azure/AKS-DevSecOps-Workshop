@@ -361,7 +361,7 @@ Defender for Containers assists you with the three core aspects of container sec
 
 To begin, open the Azure Portal and navigate to [Defender for Cloud](https://learn.microsoft.com/en-us/azure/defender-for-cloud/defender-for-cloud-introduction) - your Cloud Security Posture (CSPM) and Cloud Workload Protection Platform (CWPP).
 
-![Defender for Cloud](../../assets/images/module5/DefenderForCloud.png)
+<img alt="Defender for Cloud" src="../../assets/images/module5/DefenderForCloud.png" height="200px">
 
 The Defender for Cloud Overview tab will open and you'll find a dashboard describing your security posture, regulatory compliance, and more.  For now, turn your attention to the Management section of the navigation menu and click on Environment Settings.
 
