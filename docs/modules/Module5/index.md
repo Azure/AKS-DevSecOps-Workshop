@@ -275,11 +275,11 @@ A Settings link will appear within the description of your Defender for Containe
 Here, you have the ability to toggle automatic installation/application of Defender for Cloud components, namely, the Defender DaemonSet and Azure Policy for Kubernetes.  If these items are disabled, enable them.  This will ensure any clusters you create in the future are automatically enrolled in the service.
 
 > Note: the Defender profile uses a default Log Analytics workspace.  If you don't already have a default Log Analytics workspace, Defender for Cloud will create a new resource group and workspace for you when the profile is installed.  The default workspace is created based on your region.
-
+>
 > The naming convention for the default Log Analytics workspace and resource group is:
-- Workspace: DefaultWorkspace-[Subscription-ID]-[geo]
-- Resource Group: DefaultResourceGroup-[geo]
-
+> - Workspace: DefaultWorkspace-[Subscription-ID]-[geo]
+> - Resource Group: DefaultResourceGroup-[geo]
+>
 > See [Assign a custom workspace](https://learn.microsoft.com/en-us/azure/defender-for-cloud/defender-for-containers-enable) for instructions on how to change the workspace.
 
 Now, let's use the CLI in order to check and see if our cluster is enrolled in Defender for Containers.  If not, we'll take steps to fix it.  Return to your command line and issue the following commands:
