@@ -426,7 +426,7 @@ No resources found in asc-alerttest-662jfi039n namespace.
 
 Next, return to the Azure Portal, navigate to the cluster and click on the Defender for Cloud menu option.
 
-![Defender for Cloud Menu](../../assets/images/module5/DefenderForCloudMenu.png)
+<img alt="Defender for Cloud Menu" src="../../assets/images/module5/DefenderForCloudMenu.png" height="480px">
 
 Inside Defender for Cloud you will see a summary of Recommendations and Security Alerts for the Cluster. 
 
