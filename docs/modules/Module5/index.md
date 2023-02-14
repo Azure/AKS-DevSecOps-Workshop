@@ -1,5 +1,5 @@
 # Module 5: Operate and Monitor AKS
-In this module you will learn how to operate and monitor Azure Kubernetes Service.  You will learn about [Container Insights](https://learn.microsoft.com/en-us/azure/azure-monitor/containers/container-insights-overview), [Defender for Containers](https://learn.microsoft.com/en-us/azure/defender-for-cloud/defender-for-containers-introduction), and [Sentinel](https://learn.microsoft.com/en-us/azure/sentinel/overview).
+In this module you will learn how to operate and monitor Azure Kubernetes Service.  You will learn about [Container Insights](https://learn.microsoft.com/en-us/azure/azure-monitor/containers/container-insights-overview), [Azure Policy for Kubernetes](https://learn.microsoft.com/en-us/azure/governance/policy/concepts/policy-for-kubernetes), and [Defender for Containers](https://learn.microsoft.com/en-us/azure/defender-for-cloud/defender-for-containers-introduction).
 
 ## Container Insights
 Container Insights is a feature designed to monitor the performance of container workloads deployed to the cloud. It gives you performance visibility by collecting memory and processor metrics from controllers, nodes, and containers that are available in Kubernetes through the Metrics API. After you enable monitoring from Kubernetes clusters, metrics and Container logs are automatically collected for you through a containerized version of the Log Analytics agent for Linux. Metrics are sent to the [metrics database in Azure Monitor](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/data-platform-metrics). Log data is sent to your [Log Analytics workspace](https://learn.microsoft.com/en-us/azure/azure-monitor/logs/log-analytics-workspace-overview).
@@ -244,6 +244,109 @@ resource diag01 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
 }
 ```
 
+## Azure Policy for Kubernetes
+Azure Policy is a feature of the Azure Resource Management Platform which allows organizations to define and enforce stanards across their environments.  Azure Policy for Kubernetes is a Kubernetes add-on that works with Azure Policy.  The add-on extends extends [Gatekeeper](https://github.com/open-policy-agent/gatekeeper) v3, an _admission controller webhook_ for [Open Policy Agent](https://www.openpolicyagent.org/) (OPA).  Once installed, the add-on does the following:
+
+- Check with Azure Policy Service for policy assignments to the cluster
+- Deploys policy definitions into the cluster as [constraint template](https://open-policy-agent.github.io/gatekeeper/website/docs/howto/#constraint-templates) and [constraint](https://github.com/open-policy-agent/gatekeeper#constraints) custom resources
+- Reports auditing and compliance details back to the Azure Policy Service
+
+### Enable Azure Policy for Containers
+
+To begin, you must first register the resource provider with your Azure subscription:
+
+```
+az provider register --namespace Microsoft.PolicyInsights
+```
+
+Next, install the add-on:
+
+```
+az aks --resource-group $GROUP --name $CLUSTER enable-addons azure-policy
+```
+
+Then, verify that the add-on has been installed:
+
+```
+az aks show --resource-group $GROUP --name $CLUSTER --query addonProfiles.azurepolicy
+```
+
+The output should match the following:
+```
+{
+    "config": null,
+    "enabled": true,
+    "identity": null
+}
+```
+
+### Using Azure Policy for Kubernetes
+
+Azure Policy for Kubernetes may be viewed and managed through the Azure Portal.  Simply open Azure Policy and navigate to the Definitions tab in the Authoring section.
+
+![Azure Policy Menu](../../assets/images/module5/AzurePolicyMenu.png)
+
+Expand the Category filter and clear all the checked items except for Kubernetes.  This will filter the view down to just Azure Polciy for Kubernetes Definitions and Initiatives.  (Simply put, an Initiative is a collection of one or more Definitions applied to a particular scope, like a Resource Group.)
+
+![Azure Policy Definition Filter](../../assets/images/module5/AzurePolicyMenu.png)
+
+Azure Policy for Kubernetes provides some pre-defined iniatives.  Let's open and apply one to our infrastructure.  Find the "Kubernetes cluster pod security baseline standards for Linux-based workloads" and click it.
+
+![Azure Policy Initiative](../../assets/images/module5/AzurePolicyInitiative.png)
+
+You will see that the selected Initiative is comprised of five Policy Definitions.  Notice that one is titled, `Kubernetes cluster should not allow privileged containers.`  Let's assign this initiative to our Cluster's Resource Group.  
+
+Click the `Assign` button located at the top of the Initiative tab.
+
+![Assign Azure Policy Initiative](../../assets/images/module5/AzurePolicyAssign.png)
+
+You will be preseted with the Portal's Assign Initiative wizard.  On the Basics Tab, use the Scope control to select your Cluster's Resource Group.
+
+Then, on the Parameters tab, uncheck the `Only show parameters that need input or review` checkbox.  This will update the screen and you will be able to change the value of the `Effect` control.  Change `Effect` from `Audit` to `deny`.
+
+Then, click `Review + create` followed by `Create`.  This will apply the Initiative, however, it may take up to twenty minutes for the changes to be reflected on your Cluster.
+
+Once the Initiative is in place, you can test it out by doing the following:
+
+First, let's create a namespace to hold our work.
+
+```
+kubectl create namespace azurepolicytest
+kubectl config set-context --current --namespace azurepolicytest
+```
+
+Next, let's run an interactive bash Pod on the cluster in privileged mode:
+
+```
+kubectl run test-shell --rm -i --tty --privileged=true --image ubuntu -- bash
+```
+
+This previous command should fail due to our new Azure Policy for Kubernetes Initiative.
+
+```
+Error from server (Forbidden): admission webhook "validation.gatekeeper.sh" denied the request: [azurepolicy-k8sazurev2noprivilege-bba3aab5a745b0e81725] Privileged container is not allowed: test-shell, securityContext: {"privileged": true}
+```
+
+Now, let's clean up our cluster:
+
+```
+kubectl delete namespace azurepolicytest
+kubectl config set-context --current --namespace default
+```
+
+### Update Bicep Templates
+
+Now that we have enabled Azure Policy for Kubernetes, let's go back and update our Bicep tempaltes in order to make sure our deployment process picks up the changes.
+
+Add the following to your Bicep template:
+
+```
+// add the following to addonProfiles
+"azurepolicy": {
+    "enabled": true
+},
+```
+
 ## Defender for Containers
 Defender for Containers is a cloud-native solution that may be used to secure your containers, helping you to improve, monitor, and maintain the security of your clusters, containers, and their applications.
 
@@ -272,7 +375,7 @@ A Settings link will appear within the description of your Defender for Containe
 
 ![Defender for Cloud Settings](../../assets/images/module5/DefenderForCloudPlansSettings.png)
 
-Here, you have the ability to toggle automatic installation/application of Defender for Cloud components, namely, the Defender DaemonSet and Azure Policy for Kubernetes.  If these items are disabled, enable them.  This will ensure any clusters you create in the future are automatically enrolled in the service.
+Here, you have the ability to toggle automatic installation/application of Defender for Cloud components, namely, the Defender DaemonSet and Azure Policy for Kubernetes.  (We looked at Azure Policy for Kubernetes in the previous section.) If these items are disabled, enable them.  This will ensure any clusters you create in the future are automatically enrolled in the service.
 
 > Note: the Defender profile uses a default Log Analytics workspace.  If you don't already have a default Log Analytics workspace, Defender for Cloud will create a new resource group and workspace for you when the profile is installed.  The default workspace is created based on your region.
 >
@@ -307,30 +410,6 @@ If, for some reason, the above components are not present on your cluster, you m
 az aks update --resource-group $GROUP --name $CLUSTER --enable-defender
 ```
 
-Next, let's check Azure Policy for Kubernetes.  We'll start by checking our cluster for the presence of required pods:
-
- ```
-# check for azure-policy
-kubectl get pods -n kube-system
-
-# check for gatekeeper 
-kubectl get pods -n gatekeeper-system
-```
-
-The above output should show both Azure Policy and Gatekeeper pods are running.
-
-Next, verify that the Azure Policy add-on is installed by running this command:
-
-```
-az aks show --resource-group $GROUP --name $CLUSTER --query addonProfiles.azurepolicy 
-```
-
-If the previous command does not show Azure Policy, then issue the following command, wait a few minutes and then return to the previous verification step to make sure everything is well.
-
-```
-az aks enable-addons --resource-group $GROUP --name $CLUSTER --addons azure-policy 
-```
-
 ### Using Defender for Containers
 
 Now that Defender for Containers is enabled in our cluster, let's simulate a security alert.  Run the following command:
@@ -353,7 +432,7 @@ Inside Defender for Cloud you will see a summary of Recommendations and Security
 
 ![Defender for Cloud Recommendations and Security Alerts](../../assets/images/module5/DefenderForCloudRecommendationsAndAlertsBig.png)
 
-Near the top of the screen, you will see that there is at least 1 security alert.  This alert will correspond to the `kubectl get pods` command we ran just a few steps ago.
+Near the top of the screen, you will see that there is at least one security alert.  This alert will correspond to the `kubectl get pods` command we ran just a few steps ago.
    
 ![Defender for Cloud Security Alerts](../../assets/images/module5/DefenderForCloudAlerts.png)
 
@@ -384,10 +463,17 @@ Return to Defender for Cloud in the Azure Portal and monitor Security Alerts.  W
 
 ![Defender for Cloud Test Alert](../../assets/images/module5/DefenderForCloudPodAlert.png)
 
-Separate from the Security Alerting capabilities within Defender for Cloud, you can also check out the Recommendations Section.  These are based on Azure Policy - recall installing Azure Policy for Kubernetes above.  
+Finally, let's adjust the cluster's Bicep template in order to reflect these changes:
 
-You will find an actionable list of security recommendations for the cluster.  Click on one of the recommendations and you will be presented a view showing a description of the recommendation and instructions on how you can fix the associated issue.
-
-![Defender for Cloud Recommendation Details](../../assets/images/module5/DefenderForCloudRecommendationDetails.png)
-
-## Sentinel
+```
+// ...
+// Enable defender for containers by adding the following to the cluster's properties
+// you will need the resource id for the log analytics workspace
+securityProfile: {
+    defender: {
+    logAnalyticsWorkspaceResourceId: '/subscriptions/[SUBSCRIPTION-ID]/resourcegroups/[RESOURCE-GROUP]/providers/microsoft.operationalinsights/workspaces/[WORKSPACE-NAME]'
+    securityMonitoring: {
+        enabled: true
+    }
+}
+```
