@@ -101,7 +101,7 @@ Select the test-shell container and you'll get a description of the container.
 
 Here, you can also see a live stream of the container console and events.
 
-![Container Insights Container Events](../../assets/images/module5/ContainerInsightsClusterContainersLiveEvents.png)
+<img alt="Container Insights Container Events" src="../../assets/images/module5/ContainerInsightsClusterContainersLiveEvents.png" height="480px">
 
 Return to test-shell and type ctrl-c to terminate stress.  Then, exit the pod.
 
