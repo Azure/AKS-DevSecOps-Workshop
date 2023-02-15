@@ -13,6 +13,7 @@ Workload Identity for AKS integrates with the Kubernetes native capabilities to 
 The feature sunsets the existing pod-managed identity makes it easier to use and deploy, and overcomes several limitations in Azure AD pod-managed identity.
 
 
+![Flow](../../assets/images/module1/aks-workload-identity-model.png)
 
 ## Enabling Workload Identity
 
@@ -53,8 +54,8 @@ az provider register --namespace Microsoft.ContainerService
 
 4. Add and/or update the aks-preview extension with the Azure CLI.
 ``` 
-        az extension add --name aks-preview 
-        az extension update --name aks-preview
+az extension add --name aks-preview 
+az extension update --name aks-preview
 ```
 
 ### Enable ODIC and Workload Identity on the AKS Cluster
@@ -64,7 +65,11 @@ az provider register --namespace Microsoft.ContainerService
 
 1. Execute the following CLI command to enable oidc-issuer and to enable workload identity.
 
-     `az aks update --resource-group $RG_NAME --name $CLUSTER_NAME  --enable-oidc-issuer --enable-workload-identity`
+     ```dotnetcli
+     
+     az aks update --resource-group $RG_NAME --name $CLUSTER_NAME  --enable-oidc-issuer --enable-workload-identity
+
+    ```
 
 2. Set the ODIC Issuer URL to a variable
    
@@ -77,14 +82,14 @@ export AKS_OIDC_ISSUER="$(az aks show -n $CLUSTER_NAME -g $RG_NAME --query "oidc
 
 1. Create Managed Identity
    
-        ```
-        export USER_ASSIGNED_IDENTITY_NAME="workshop-Identity"
-        az identity create --name "${USER_ASSIGNED_IDENTITY_NAME}" --resource-group "${RG_NAME}" --location "${LOCATION}" --subscription "${SUBSCRIPTION_ID}"
-        ```
+```
+export USER_ASSIGNED_IDENTITY_NAME="workshop-Identity"
+az identity create --name "${USER_ASSIGNED_IDENTITY_NAME}" --resource-group "${RG_NAME}" --location "${LOCATION}" --subscription "${SUBSCRIPTION_ID}"
+```
 
 2. Create a Secret in Keyvault
     ```
-        az keyvault secret set --vault-name "${KEYVAULT_NAME}" \
+az keyvault secret set --vault-name "${KEYVAULT_NAME}" \
        --name "${KEYVAULT_SECRET_NAME}" \
        --value "LevelUp Lab Secret\!"
     ```
@@ -101,8 +106,13 @@ export AKS_OIDC_ISSUER="$(az aks show -n $CLUSTER_NAME -g $RG_NAME --query "oidc
 #### Create a Service Account and Establish Federated Identity
 
 1. Connect to AKS cluster
-   `az aks get-credentials --resource-group rg-aks-gha  --name aksbicep --admin`
 
+   
+   ```
+az aks get-credentials --resource-group rg-aks-gha  --name aksbicep --admin
+```
+
+2. Deploy Service Account
  ```
 export SERVICE_ACCOUNT_NAME="workload-identity-sa"
 export SERVICE_ACCOUNT_NAMESPACE="default"
@@ -120,20 +130,33 @@ metadata:
 EOF
  ```
 
-2. Establish Federated Identity
+3. Establish Federated Identity
 
-` 
+```
 az identity federated-credential create --name myfederatedIdentity --identity-name "${USER_ASSIGNED_IDENTITY_NAME}" --resource-group "${RG_NAME}" --issuer "${AKS_OIDC_ISSUER}" --subject system:serviceaccount:"${SERVICE_ACCOUNT_NAMESPACE}":"${SERVICE_ACCOUNT_NAME}"
-`
+```
 
-#### Deploy Sample workload
+Navigate to your cluster resource group, and you will now see an identity. Click the Identity resource and select the "Federated credentials" blade under Settings.
+
+![Managed Identity](../../assets/images/module1/ManagedIdentity.png)
+
+
+
+#### Deploy Sample workload & Test
 
 <!--
 Internal note: Should this de deployed by github action instead?
 --->
 
-```
 
+
+1. Execute the following to deploy a sample Go application that writes to the log the content of the secret inside keyvault. The Go application expects two environment variables for the Kevault URL and the Keyvault secret name references.
+
+Note the following required annotations on the K8S YAML configuration:
+- azure.workload.identity/use: "true"
+- serviceAccountName: ${SERVICE_ACCOUNT_NAME}
+
+```
 export KEYVAULT_URL="$(az keyvault show -g ${RG_NAME} -n ${KEYVAULT_NAME} --query properties.vaultUri -o tsv)"
 
 cat <<EOF | kubectl apply -f -
@@ -160,21 +183,33 @@ EOF
 
 ```
 
+2. Check the pod deployment and logs to ensure it has read the secret from keyvault:
+Check to see the pod is running:
+```
 kubectl get pods quick-start
-
+```
+Once the pod is running, ensure the pod is showing the KeyVault secret:
+```
 kubectl logs quick-start
-
-
+```
 
 If it was successful, you will see the following message:
 '
 I0213 23:37:08.149572       1 main.go:63] "successfully got secret" secret="LevelUp Lab Secret\\!"
 '
 
+This completes the hands-on lab.
 
 #### Troubleshooting
 
-In the case you do not see the above logs, validate the environment variables and delete/re-deploy.
+In the case you do not see the above logs, validate the environment variables and delete/re-deploy the application.
+
+For troubleshooting the azure-workload-identity components, you can view and isolate errors from logs with the following command:
+
 ```
-kubectl delete pod quick-start
+kubectl logs -n kube-system -l azure-workload-identity.io/system=true  --since=1h | grep ^E
 ```
+
+#### Optional - Update Bicep template
+
+- TBD
