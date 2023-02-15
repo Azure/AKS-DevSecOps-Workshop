@@ -1,54 +1,21 @@
-# Module 1 - Deploy Infrastructure
+---
+title: Module 1 - Plan phase
 
-## Deploy Infrastructure
+has_children: true
 
-To deploy the infrastructure for this workshop you can choose from one of the two options below.  This will deploy your resources into a single resource group.  Once the lab is complete, you can clean up the resources by deleting the resource group that is created upon deployment.
+---
 
-Use the following parameter references when deploying infrastructure:
+## Plan phase
 
-#### Parameters Reference
+The plan phase generally has the least amount of automation but will have important security implications that significantly impact later DevOps lifecycle stages. This stage involves collaboration between security, development, and operations teams. Including security stakeholders in this phase of designing and planning ensures security requirements and security issues are appropriately accounted for or mitigated. 
+Best Practice – AKS Secure application platform design
 
-Parameter Name | Description 
--------------- | ----------- 
- rgname | this parameter is the name of the resource group - the template is a subscription scope which deploys a resource group with all of the necessary resources.  Record this value for use in the subsequent lab modules.
- alias | this parameter is used to create a unique name for your resources and dns prefix for your aks cluster. **This must be unique** As a recommendation, use the first 4 characters of your alias along with 4 random numbers. Example: tedd2022. Record this value for use in the subsequent lab modules.
- location | this parameter is the azure datacenter that the resource group and resources will be created in - with the exception of the azure load testing resource which is further limited.  the allowed values for this parameter are datacenters that support aks 
- loadTestingLocation | the datacenter for load testing - allowed values are datacenters that support the load testing resource 
+## Best Practice - Secure Platform Design
 
-### Option 1 - Deploy using button
+Building a secure AKS hosted platform is an important step to ensure security is built into the system at every layer, starting with the platform itself. This can include components both internal to the cluster such as runtime security and policy agents, as well as components that are external to AKS such as network firewalls, and container registries. For in-depth information on these topics, visit the AKS Landing zone accelerator, which contains critical design areas such as security, identity, and network topology.
 
-Open the button below in a new window and provide the parameters in the portal - see parameters below for an explanation of the template parameters
+## Best Practice - Threat Modeling
 
-[![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2Faks-advanced-autoscaling%2Fmain%2Ftools%2Fdeploy%2Fmodule1%2Fdeployrg.json)
+Threat Modeling is traditionally a manual activity that is a collaboration involving security and development teams.  It is used to model and find threats within a system, allowing vulnerabilities to be addressed prior to any code being developed or changes being made to a system. Threat modeling can occur at different times, triggered by events such as a significant software change, solution architectural change, and security incidents.
 
-
-## Validate & Check Deployment
-
-Visit the new resource group that was created in the deployment and ensure that the following resources are deployed - 
-![azure resources screenshot](../../assets/images/module1/lvlupresources.png)
-
-The following table lists the resources that should be created:
-
-| Resource Type | Resource Name |
-|------------------------|-------------------------|
-| Kubernetes Service | akscluster |
-| Network Security Group | **alias**AKSNSG |
-| Container Registry | **alias**lvlupacr |
-| Key Vault | **alias**lvlupkeyvault |
-| Azure Load Testing | **alias**lvluploadtesting |
-| Virtual Network | **alias**lvlupvnet |
-| Service Bus Namespace | **alias**servicebus |
-
-Click on the link for the virtual network, and then click on subnets from the left hand navigation.  Ensure there are 2 subnets listed, one called aksSubnet and a second one called aciSubnet Look for \<alias>AKSNSG resource to be associated to the aksSubnet. note: the aciSubnet will likely also have an associated NSG that is created by policy if deploying to a corporate subscription - 
-![subnets view of vnet](../../assets/images/module1/nsgassociation.png)
-
-Click on the link for the security group and make sure that there is an inbound rule with priority 1000 to allow http such as - 
-![nsg rule 1000 showing open port 80](../../assets/images/module1/port80rule.png)
-
-Go back to the resource group, click on the Service Bus resource, and choose Queues from the left hand navigation.  Ensure there is a queue named orders such as - 
-![view of Queues in service bus](../../assets/images/module1/ServiceBusCheck.png)
-
-Finally, go back to the resource group, click on the Azure Container Registry resource, on the left hand navigation, choose Access control (IAM) - choose the Role assignments tab from the top context menu, and check that your akscluster-agentpool has been given AcrPull permissions to the container registry -
-![container registry permissions view](../../assets/images/module1/acr_permissions.png)
-
-Once finished, proceed to [Module2!](../Module2/index.md)
+Microsoft recommends and uses the [STRIDE threat model](https://learn.microsoft.com/en-us/azure/security/develop/threat-modeling-tool-threats#stride-model), a methodology which starts with a data flow diagram and using the STRIDE mnemonic (Spoofing, Tampering, Info Disclosure, Repudiation, Denial of Service and Elevation of Privilege) threat categories and empowers teams to identify, mitigate, and validate risk. This also includes a [modeling tool](https://www.microsoft.com/en-us/securityengineering/sdl/threatmodeling) to easily notate and visualize system components, data flows and security boundaries. Building threat modeling into your SDLC processes will introduce new processes and additional work to maintain updated threat models but will ensure security is in place early which in turn will reduce the potential cost of dealing with security issues found in later SDLC stages.
