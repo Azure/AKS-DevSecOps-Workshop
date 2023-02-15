@@ -65,17 +65,17 @@ az extension update --name aks-preview
 
 1. Execute the following CLI command to enable oidc-issuer and to enable workload identity.
 
-     ```dotnetcli
+```
      
-     az aks update --resource-group $RG_NAME --name $CLUSTER_NAME  --enable-oidc-issuer --enable-workload-identity
+az aks update --resource-group $RG_NAME --name $CLUSTER_NAME --enable-oidc-issuer --enable-workload-identity
 
-    ```
+```
 
 2. Set the ODIC Issuer URL to a variable
    
 ``` 
 export AKS_OIDC_ISSUER="$(az aks show -n $CLUSTER_NAME -g $RG_NAME --query "oidcIssuerProfile.issuerUrl" -otsv)"
-  echo $AKS_OIDC_ISSUER
+echo $AKS_OIDC_ISSUER
 ``` 
 
 ### Create a managed identity and grant permission to Azure Keyvault
@@ -88,32 +88,31 @@ az identity create --name "${USER_ASSIGNED_IDENTITY_NAME}" --resource-group "${R
 ```
 
 2. Create a Secret in Keyvault
-    ```
+   
+```
 az keyvault secret set --vault-name "${KEYVAULT_NAME}" \
        --name "${KEYVAULT_SECRET_NAME}" \
        --value "LevelUp Lab Secret\!"
-    ```
+```
 
 3. Create Access Policy against Keyvault
    
-    ```
-    export USER_ASSIGNED_CLIENT_ID="$(az identity show --resource-group "${RG_NAME}" --name "${USER_ASSIGNED_IDENTITY_NAME}" --query 'clientId' -otsv)"
+```
+export USER_ASSIGNED_CLIENT_ID="$(az identity show --resource-group "${RG_NAME}" --name "${USER_ASSIGNED_IDENTITY_NAME}" --query 'clientId' -otsv)"
     
-    az keyvault set-policy --name "${KEYVAULT_NAME}" --secret-permissions get --spn "${USER_ASSIGNED_CLIENT_ID}"
-    ```
+az keyvault set-policy --name "${KEYVAULT_NAME}" --secret-permissions get --spn "${USER_ASSIGNED_CLIENT_ID}"
+```
 
 
 #### Create a Service Account and Establish Federated Identity
 
 1. Connect to AKS cluster
-
-   
-   ```
+```
 az aks get-credentials --resource-group rg-aks-gha  --name aksbicep --admin
 ```
 
-2. Deploy Service Account
- ```
+1. Deploy Service Account
+```
 export SERVICE_ACCOUNT_NAME="workload-identity-sa"
 export SERVICE_ACCOUNT_NAMESPACE="default"
 
@@ -128,7 +127,7 @@ metadata:
   name: "${SERVICE_ACCOUNT_NAME}"
   namespace: "${SERVICE_ACCOUNT_NAMESPACE}"
 EOF
- ```
+```
 
 3. Establish Federated Identity
 
@@ -194,9 +193,9 @@ kubectl logs quick-start
 ```
 
 If it was successful, you will see the following message:
-'
+<pre>
 I0213 23:37:08.149572       1 main.go:63] "successfully got secret" secret="LevelUp Lab Secret\\!"
-'
+</pre>
 
 This completes the hands-on lab.
 
