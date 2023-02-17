@@ -3,10 +3,10 @@
 param dnsPrefix string = resourceGroup().name // name is obtained from env
 
 @description('The administrator username to use for Linux VMs.')
-param linuxAdminUsername string
+param linuxAdminUsername string = 'workshopadmin'
 
 @description('Certificate public key used to authenticate with VMs through SSH. The certificate must be in PEM format with or without headers.')
-param sshRSAPublicKey string = 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDQAuD+1JUFJiE5P+Nz3/EHdBNT3n1P6HKWscW6RuL8fWJQsWfQ0ocrmPvNUmRoPpJlR0V1U+eP02PDV8/0gr6olfloVgsaD1gq2mffVNQ6/E1ep5H4iCE+8hVm4KK8xdzeYPqnz6YWagUDYPCrlCc4BROL+kMM0ev0et1vxYhF5a3jP2Fg0SJ0VzzjrvBWbxfylnB1aG6CWlhQ7fZYXfT0T54kyMWErIHvnhQTXnaf8bZchq1NYUYiRAKKLI8cCFfZjbw62D0CJqGSh3xKDVwC5HEuBYEBz6vKUQ+EKbt7w+LnbK6JVURlzOGRS8NiHLVXZBiJn9vJDHGwJ/pRxZRp5tEdT+H12n3x6N9SUCheHpHP+q5Km1kzID3Vn56G+LlQxEg+5tSjHM0VmqLNujb4hrXQmeOKgs+dHmuZvxvWpYMjxmH9f8FOnVR4giC9TpZ1tgD98bxl49kOJ7MaDLFBupqbZ5TB4ndQ4ZaHkHPxWep2Rg5K/mWpbOmMofif4VZ0/Zhfc8XegcoiSH/3rm1Ej1NP4Wu4nq5Ocun5Rwjz6mmtH637bpWD0hCKPVt5omARtCBf1EysSkfyD5MW8/F79EHDrd7NzbnPPsBFSryuMIXPGVktdn4h1dOvUimHb4mOD7og7N9JMpawOUB+i0sQjiZ7ikiMluYLGYHJYG/fZQ== ahmedbham@microsoft.com'
+param sshRSAPublicKey string
 
 // @description('The ID for the service principal.')
 // param servicePrincipalClientId string
