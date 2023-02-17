@@ -288,7 +288,7 @@ Azure Policy for Kubernetes may be viewed and managed through the Azure Portal. 
 
 Expand the Category filter and clear all the checked items except for Kubernetes.  This will filter the view down to just Azure Polciy for Kubernetes Definitions and Initiatives.  (Simply put, an Initiative is a collection of one or more Definitions applied to a particular scope, like a Resource Group.)
 
-![Azure Policy Definition Filter](../../assets/images/module5/AzurePolicyMenu.png)
+![Azure Policy Definition Filter](../../assets/images/module5/AzurePolicyDefinitionFilter.png)
 
 Azure Policy for Kubernetes provides some pre-defined iniatives.  Let's open and apply one to our infrastructure.  Find the "Kubernetes cluster pod security baseline standards for Linux-based workloads" and click it.
 
