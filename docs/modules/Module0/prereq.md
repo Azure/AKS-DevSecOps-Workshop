@@ -12,67 +12,104 @@ nav_order: 2
 * Azure Subscription
 * WSL or Linux Terminal
 * Azure CLI
-* An [SSH public key](https://cda.ms/2nD).
-  If you need to create a key, run the following command:
 
-    `ssh-keygen -m PEM -t rsa -b 4096`
+## Infrastructure Deployment via GitHub Actions
 
-  To retrieve the public key:
+For this workshop, we will be using GitHub Actions to deploy the infrastructure.  This will require performing the following tasks:
 
-    `cat ~/.ssh/id_rsa.pub`
+1. Cloning/Importing this repository into your GitHub account 
+2. Creating an Azure Resource Group
+3. Configuring OpenID Connect in Azure. OpenID Connect (OIDC) allows your GitHub Actions workflows to access resources in Azure, without needing to store the Azure credentials as long-lived GitHub secrets. 
+4. Setting Github Actions secrets
+5. Triggering the GitHub Actions workflow
 
-## Environment Setup
+### Cloning/Importing this repository into your GitHub account
 
-1. Create a Service Principal for Github Actions'
-  Note: Replace <subscription-id> with your subscriptionId
+* Import this repository as a new repository in your GitHub account, by navigating to the following URL: [Import Repo](https://github.com/new/import).  You can also find this by clicking the `Import a repository` link on the create a new repository within GitHub.  
+  * Enter `https://github.com/Azure/AKS-DevSecOps-Workshop` in `Your old repository’s clone URL` field
+  * Enter the name of your new repository in the `Name your new repository` field
+  * Click `Begin import`
 
-  `az ad sp create-for-rbac --name "sp-aks-gha" --role "Contributor" --scopes /subscriptions/<subscription-id> --sdk-auth> sp.txt` 
+### Creating an Azure Resource Group
 
-  This `sp.txt` file now contains your service principal credentials to login to your Azure account when running GitHub Actions.  Now to add them as secrets within the GitHub Secrets environment variables.
+```bash
+resourceGroupName="rg-aks-gha"
+location="eastus"
+az group create --name $resourceGroupName --location $location
+```
+
+### Configuring OpenID Connect in Azure
+
+1. Create an Active Directory application
+
+   ```bash
+   appId=$(az ad app create --display-name myOidcApp --query appId --output tsv)
+   ```
+
+2. Create a service principal.
+
+   ```bash
+   assigneeObjectId=$(az ad sp create --id $appId --query Id --output tsv) 
+   ```
+
+3. Create a role assignment.
+
+   ```bash
+   subscriptionId=$(az account show --query id --output tsv)
+   az role assignment create --role contributor --subscription $subscriptionId --assignee-object-id  $assigneeObjectId --assignee-principal-type ServicePrincipal --scope /subscriptions/$subscriptionId/resourceGroups/$resourceGroupName
+   ```
+
+4. Configure a federated identity credential on the Azure AD app created in step 1. 
+
+   You use workload identity federation to configure an Azure AD app registration to trust tokens from an external identity provider (IdP), such as GitHub.
+
+   In [credential.json](../../../tools/deploy/module0/credential.json) file, replace `<your-github-username>` with your GitHub username.
+
+   `"subject": "repo:<your-github-username>/AKS-DevSecOps-Workshop:ref:refs/heads/main",`
+
+   If you name your new repository something other than `AKS-DevSecOps-Workshop`, you will need to replace `AKS-DevSecOps-Workshop` above with the name of your repository. Also, if your deployment branch is not `main`, you will need to replace `main` with the name of your deployment branch.
+
+   Then run the following command to create a federated credential for the Azure AD app.
+
+   ```bash
+   az ad app federated-credential create --id $appId tools/deploy/module0/credential.json
+   ```
+
+### Setting Github Actions secrets
+
+1. Open your newly imported Github repository and click on the "Settings" tab.
+2. In the left-hand menu, expand "Secrets and variables", and click on "Actions".
+3. Click on the "New repository secret" button for each of the following secrets:
+   * `AZURE_SUBSCRIPTION_ID`
+   * `AZURE_TENANT_ID` (run `az account show --query tenantId --output tsv` to get the value)
+   * `AZURE_CLIENT_ID` (this is the appId from the JSON output of the `az ad app create` command)
+   * `AZURE_RESOURCE_GROUP`
+
+### Triggering the GitHub Actions workflow
+
+When you commit these updates to the main branch, GitHub Actions will deploy your AKS cluster by executing [infra-deployment-workflow.yml](../../../.github/workflows/infra-deployment-workflow.yml).
+
+## Infrastructure Deployment Manually
 
 1. Create a Resource Group.
 
-  `az group create --name "rg-aks-gha" --location "westus"`
+  ```bash
+  resourceGroupName="rg-aks-gha"
+  location="eastus"
+  az group create --name $resourceGroupName --location $location
 
-   1. 
+1. Deploy the AKS cluster bicep template:
 
-   * Import this repository as a new repository in your GitHub account, by navigating to the following URL: [Import Repo](https://github.com/new/import).  You can also find this by clicking the `Import a repository` link on the create a new repository within GitHub.  
-     * Enter `https://github.com/Azure/AKS-DevSecOps-Workshop` in `Your old repository’s clone URL` field
-     * Enter the name of your new repository in the `Name your new repository` field
-     * Click `Begin import`
-   * Once the import is complete, set the following Github Actions secrets:
+   ```bash
+   az deployment group create --template-file tools/deploy/module0/aks.bicep --resource-group $resourceGroupName --parameters location=$location
+   ```
 
-     `AZURE_CREDENTIALS: <is the output of sp.txt>`
-
-     `AZURE_SUBSCRIPTION_ID: <subscription-id>`
-
-     `AZURE_TENANT_ID: <tenant-id>`
-
-     `AZURE_RESOURCE_GROUP: <resource-group>`
-
-     `CLUSTER_NAME: <cluster-name>`
-
-* update [aks.bicep](../../../tools/deploy/module0/aks.bicep) with your SSH public key:
-  
-  `param sshRSAPublicKey string = < output of cat ~/.ssh/id_rsa.pub >`
-
-* When you commit these updates to the main branch, GitHub Actions will deploy your AKS cluster by executing [infra-deployment-workflow.yml](../../../.github/workflows/infra-deployment-workflow.yml).
-
-* You can also deploy the AKS cluster manually by running the following commands:
-
-```bash
-export SSH=
-export RG_NAME=
-export LOCATION=
-az login
-az account set --subscription $SUBSCRIPTION
-az group create --name $NAME --location $LOCATION
-az deployment group create --template-file ../../../tools/deploy/module0/aks.bicep --resource-group $RG_NAME --parameters location=$LOCATION sshRSAPublicKey=$SSH linuxAdminUsername=workshopadmin
-```
+## Connect to your cluster
 
 * To connect to your cluster:
 
-```bash
-az aks get-credentials --name $NAME --resource-group $NAME
-kubectl get nodes
-```
+   ```bash
+   clusterName=devsecops-aks
+   az aks get-credentials --name $clusterName --resource-group $resourceGroupName
+   kubectl get nodes
+   ```
