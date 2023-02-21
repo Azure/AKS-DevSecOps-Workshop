@@ -12,7 +12,7 @@ param dnsPrefix string = resourceGroup().name // name is obtained from env
 // param servicePrincipalClientId string
 
 @description('The unique name for the AKS cluster, such as myAKSCluster.')
-param uniqueclustername string = 'aksbicep'
+param clusterName string = 'devsecops-aks'
 
 // @secure()
 // @description('The secret password associated with the service principal.')
@@ -36,7 +36,7 @@ param agentCount int = 3
 param agentVMSize string = 'Standard_DS2_v2'
 
 resource aks 'Microsoft.ContainerService/managedClusters@2022-09-02-preview' = {
-  name: uniqueclustername
+  name: clusterName
   location: location
   identity: {
     type: 'SystemAssigned'
