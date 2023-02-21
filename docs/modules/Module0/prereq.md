@@ -38,9 +38,25 @@ az group create --name "rg-aks-gha" --location "eastus"
 
 ### Configuring OpenID Connect in Azure
 
+1. Create an Active Directory application
+
 ```bash
-az ad app create --display-name myNewOidcApp
-az ad sp create --id $appId
+az ad app create --display-name myOidcApp --query appId --output tsv
+```
+
+  This command will output JSON with an appId that is your client-id. Save the value to use as the AZURE_CLIENT_ID GitHub secret later.
+
+2. Create a service principal. Replace the $appID with the appId from your JSON output.
+
+```bash
+az ad sp create --id $appId --query Id --output tsv 
+```
+
+    This command generates JSON output with an Id field and will be used in the next step. The new Id is the assignee-object-id
+
+3. Create a role assignment. Replace the $subscriptionId, $resourceGroupName, and $assigneeObjectId.
+
+```bash
 az role assignment create --role contributor --subscription $subscriptionId --assignee-object-id  $assigneeObjectId --assignee-principal-type ServicePrincipal --scope /subscriptions/$subscriptionId/resourceGroups/$resourceGroupName
 az ad app federated-credential create --id $appId input.json
 ```
