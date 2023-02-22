@@ -13,22 +13,19 @@ nav_order: 2
 * WSL or Linux Terminal
 * Azure CLI
 
-## Infrastructure Deployment via GitHub Actions
+## Infrastructure Deployment via GitHub Actions using OpenID Connect
 
-For this workshop, we will be using GitHub Actions to deploy the infrastructure.  This will require performing the following tasks:
+For this workshop, we will be using GitHub Actions using OpenID Connect to deploy the infrastructure.  This will require performing the following tasks:
 
-1. Cloning/Importing this repository into your GitHub account 
+1. Forking this repository into your GitHub account 
 2. Creating an Azure Resource Group
 3. Configuring OpenID Connect in Azure. OpenID Connect (OIDC) allows your GitHub Actions workflows to access resources in Azure, without needing to store the Azure credentials as long-lived GitHub secrets. 
 4. Setting Github Actions secrets
 5. Triggering the GitHub Actions workflow
 
-### Cloning/Importing this repository into your GitHub account
+### Forking this repository into your GitHub account
 
-* Import this repository as a new repository in your GitHub account, by navigating to the following URL: [Import Repo](https://github.com/new/import).  You can also find this by clicking the `Import a repository` link on the create a new repository within GitHub.  
-  * Enter `https://github.com/Azure/AKS-DevSecOps-Workshop` in `Your old repository’s clone URL` field
-  * Enter the name of your new repository in the `Name your new repository` field
-  * Click `Begin import`
+* Fork this repository into your GitHub account by clicking on the "Fork" button at the top right of this page.
 
 ### Creating an Azure Resource Group
 
@@ -87,7 +84,11 @@ az group create --name $resourceGroupName --location $location
 
 ### Triggering the GitHub Actions workflow
 
-When you commit these updates to the main branch, GitHub Actions will deploy your AKS cluster by executing [infra-deployment-workflow.yml](../../../.github/workflows/infra-deployment-workflow.yml).
+* To trigger the GitHub Actions workflow, you will need to make a change to the [aks.bicep](../../../tools/deploy/module0/aks.bicep) file. You can change the `clusterName` parameter to something unique.
+* Alternatively, you can manually start the workflow by:
+  * clicking on the "Actions" tab.
+  * Select "infra-deployment-workflow.yml" from the list of workflows.
+  * Click on the "Run workflow" button.
 
 ## Infrastructure Deployment Manually
 
@@ -110,6 +111,6 @@ When you commit these updates to the main branch, GitHub Actions will deploy you
 
    ```bash
    clusterName=devsecops-aks
-   az aks get-credentials --name $clusterName --resource-group $resourceGroupName
+   az aks get-credentials --name $clusterName --resource-group $resourceGroupName --admin
    kubectl get nodes
    ```
