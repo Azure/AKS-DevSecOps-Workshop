@@ -26,10 +26,13 @@ For this workshop, we will be using GitHub Actions using OpenID Connect to deplo
 ### Forking this repository into your GitHub account
 
 * Fork this repository into your GitHub account by clicking on the "Fork" button at the top right of this page.
+* Clone your newly forked repository to your local machine.
+
 
 ### Creating an Azure Resource Group
 
 ```bash
+az login
 resourceGroupName="rg-aks-gha"
 location="eastus"
 az group create --name $resourceGroupName --location $location
@@ -41,12 +44,14 @@ az group create --name $resourceGroupName --location $location
 
    ```bash
    appId=$(az ad app create --display-name myOidcApp --query appId --output tsv)
+   echo $appId
    ```
 
 2. Create a service principal.
 
    ```bash
-   assigneeObjectId=$(az ad sp create --id $appId --query Id --output tsv) 
+   assigneeObjectId=$(az ad sp create --id $appId --query id --output tsv)
+   echo $assigneeObjectId 
    ```
 
 3. Create a role assignment.
@@ -60,7 +65,7 @@ az group create --name $resourceGroupName --location $location
 
    You use workload identity federation to configure an Azure AD app registration to trust tokens from an external identity provider (IdP), such as GitHub.
 
-   In [credential.json](../../../tools/deploy/module0/credential.json) file, replace `<your-github-username>` with your GitHub username.
+   In [credential.json](../../../tools/deploy/module0/credential.json) file, replace `<your-github-username>` with your GitHub username (in your local repo).
 
    `"subject": "repo:<your-github-username>/AKS-DevSecOps-Workshop:ref:refs/heads/main",`
 
@@ -69,7 +74,7 @@ az group create --name $resourceGroupName --location $location
    Then run the following command to create a federated credential for the Azure AD app.
 
    ```bash
-   az ad app federated-credential create --id $appId tools/deploy/module0/credential.json
+   az ad app federated-credential create --id $appId --parameters tools/deploy/module0/credential.json
    ```
 
 ### Setting Github Actions secrets
@@ -77,24 +82,25 @@ az group create --name $resourceGroupName --location $location
 1. Open your newly imported Github repository and click on the "Settings" tab.
 2. In the left-hand menu, expand "Secrets and variables", and click on "Actions".
 3. Click on the "New repository secret" button for each of the following secrets:
-   * `AZURE_SUBSCRIPTION_ID`
+   * `AZURE_SUBSCRIPTION_ID`(this is the `subscriptionId`from the previous step)
    * `AZURE_TENANT_ID` (run `az account show --query tenantId --output tsv` to get the value)
    * `AZURE_CLIENT_ID` (this is the appId from the JSON output of the `az ad app create` command)
-   * `AZURE_RESOURCE_GROUP`
+   * `CLUSTER_RESOURCE_GROUP` (this is the `resourceGroupName` from earlier step)
 
 ### Triggering the GitHub Actions workflow
 
 * To trigger the GitHub Actions workflow, you will need to make a change to the [aks.bicep](../../../tools/deploy/module0/aks.bicep) file. You can change the `clusterName` parameter to something unique.
 * Alternatively, you can manually start the workflow by:
   * clicking on the "Actions" tab.
-  * Select "infra-deployment-workflow.yml" from the list of workflows.
-  * Click on the "Run workflow" button.
+  * Select `.github/workflows/infra-deployment-workflow.yml` from the list of workflows on the left.
+  * Click on the `Run workflow` button.
 
 ## Infrastructure Deployment Manually
 
 1. Create a Resource Group.
 
   ```bash
+  az login
   resourceGroupName="rg-aks-gha"
   location="eastus"
   az group create --name $resourceGroupName --location $location
