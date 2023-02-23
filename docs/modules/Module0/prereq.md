@@ -9,17 +9,9 @@ nav_order: 2
 
 ## Requirements
 
-<<<<<<< HEAD
-* Azure Subscription
-* WSL or Linux Terminal
-* Azure CLI
-* An [SSH public key](https://cda.ms/2nD).
-  If you need to create a key, run the following command:
-=======
 * Azure Subscription (if you don't have one, you can create a free account [here](https://azure.microsoft.com/en-us/free/))
 * Azure CLI (if you don't have one, you can install it [here](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli))
 * Github Account (if you don't have one, you can create one [here](https://github.com)
->>>>>>> e466fa426800d0f5778a06efda4207ef25d6fc33
 
 ## AKS Cluster Deployment via GitHub Actions using OpenID Connect and Bicep (IaC)
 
@@ -30,14 +22,7 @@ For this workshop, we will be using GitHub Actions using OpenID Connect and Infr
 * GitHub Actions - GitHub Actions is a feature of GitHub that allows you to automate your software development workflows.
 * Bicep - Bicep is a Domain Specific Language (DSL) for deploying Azure resources declaratively. It aims to drastically simplify the authoring experience with a cleaner syntax, improved type safety, and better support for modularity and code re-use.
 
-<<<<<<< HEAD
-## Environment Setup
-
-1. Create a Service Principal for Github Actions'
-  Note: Replace <subscription-id> with your subscriptionId
-=======
 This will require performing the following tasks:
->>>>>>> e466fa426800d0f5778a06efda4207ef25d6fc33
 
 1. Forking this repository into your GitHub account 
 2. Creating an Azure Resource Group
@@ -47,33 +32,10 @@ This will require performing the following tasks:
 
 ### Forking this repository into your GitHub account
 
-<<<<<<< HEAD
-1. Create a Resource Group.
-=======
 * Fork this repository into your GitHub account by clicking on the "Fork" button at the top right of this page.
 * Clone your newly forked repository to your local machine.
->>>>>>> e466fa426800d0f5778a06efda4207ef25d6fc33
 
 
-<<<<<<< HEAD
-   1. 
-
-   * Import this repository as a new repository in your GitHub account, by navigating to the following URL: [Import Repo](https://github.com/new/import).  You can also find this by clicking the `Import a repository` link on the create a new repository within GitHub.  
-     * Enter `https://github.com/Azure/AKS-DevSecOps-Workshop` in `Your old repository’s clone URL` field
-     * Enter the name of your new repository in the `Name your new repository` field
-     * Click `Begin import`
-   * Once the import is complete, set the following Github Actions secrets:
-
-     `AZURE_CREDENTIALS: <is the output of sp.txt>`
-
-     `AZURE_SUBSCRIPTION_ID: <subscription-id>`
-
-     `AZURE_TENANT_ID: <tenant-id>`
-
-     `AZURE_RESOURCE_GROUP: <resource-group>`
-
-     `CLUSTER_NAME: <cluster-name>`
-=======
 ### Creating an Azure Resource Group
 
 ```bash
@@ -93,7 +55,6 @@ az group create --name $resourceGroupName --location $location
    ```
 
 2. Create a service principal for the Azure AD app.
->>>>>>> e466fa426800d0f5778a06efda4207ef25d6fc33
 
    ```bash
    assigneeObjectId=$(az ad sp create --id $appId --query id --output tsv)
@@ -108,17 +69,6 @@ az group create --name $resourceGroupName --location $location
    az role assignment create --role contributor --subscription $subscriptionId --assignee-object-id  $assigneeObjectId --assignee-principal-type ServicePrincipal --scope /subscriptions/$subscriptionId/resourceGroups/$resourceGroupName
    ```
 
-<<<<<<< HEAD
-```bash
-export SSH=
-export RG_NAME=
-export LOCATION=
-az login
-az account set --subscription $SUBSCRIPTION
-az group create --name $NAME --location $LOCATION
-az deployment group create --template-file ../../../tools/deploy/module0/aks.bicep --resource-group $RG_NAME --parameters location=$LOCATION sshRSAPublicKey=$SSH linuxAdminUsername=workshopadmin
-```
-=======
 4. Configure a federated identity credential on the Azure AD app.
 
    You use workload identity federation to configure an Azure AD app registration to trust tokens from an external identity provider (IdP), such as GitHub.
@@ -171,7 +121,6 @@ az deployment group create --template-file ../../../tools/deploy/module0/aks.bic
    ```
 
 ## Connect to your cluster
->>>>>>> e466fa426800d0f5778a06efda4207ef25d6fc33
 
 * To connect to your cluster:
 
