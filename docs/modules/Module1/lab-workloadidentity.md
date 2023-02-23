@@ -23,7 +23,7 @@ Set the following environment variables in your bash session by updating the val
 
 ```bash
 SUBSCRIPTION_ID=<SubscriptionID>
-KEYVAULT_NAME=<Must be a unique keyvault name>
+KEYVAULT_NAME=<Keyvault found in RG>
 RG_NAME=rg-aks-gha
 LOCATION=eastus
 CLUSTER_NAME=devsecops-aks
@@ -168,6 +168,7 @@ kubectl logs quick-start
 ```
 If the pod communication to the KeyVault was successful, you will see the following message:
 ![Pod Logs](../../assets/images/module1/podlogs.png)
+
 3. Inspect the additional environment variables and volumeMounts created:
 ```bash
 kubectl get pod quick-start -o yaml
