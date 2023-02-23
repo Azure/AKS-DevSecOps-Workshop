@@ -39,3 +39,8 @@ jobs:
         template: tools/deploy/module0/aks.bicep 
         # parameters: tools/deploy/module0/azuredeploy.parameters.json
         failOnStdErr: false
+
+      # az feature register for Lab 1
+    - name: az feature register
+      run: |
+        az feature register --namespace "Microsoft.ContainerService" --name "EnableWorkloadIdentityPreview"  

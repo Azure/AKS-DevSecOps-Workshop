@@ -5,6 +5,10 @@ param dnsPrefix string = resourceGroup().name // name is obtained from env
 @description('The unique name for the AKS cluster, such as myAKSCluster.')
 param clusterName string = 'devsecops-aks'
 
+@description('The unique name for the Azure Key Vault.')
+param akvName string = 'akv-${uniqueString(resourceGroup().id)}'
+
+
 // Optional params
 @description('The region to deploy the cluster. By default this will use the same region as the resource group.')
 param location string = resourceGroup().location
@@ -38,6 +42,32 @@ resource aks 'Microsoft.ContainerService/managedClusters@2022-09-02-preview' = {
       managed: true
       enableAzureRBAC: true
     }    
+  }
+}
+
+resource akv 'Microsoft.KeyVault/vaults@2022-07-01' = {
+  name: akvName
+  location: location
+  properties: {
+    sku: {
+      name: 'standard'
+      family: 'A'
+    }
+    tenantId: subscription().tenantId
+    accessPolicies: [
+      {
+        tenantId: subscription().tenantId
+        objectId: aks.identity.principalId
+        permissions: {
+          keys: [
+            'get'
+          ]
+          secrets: [
+            'get'
+          ]
+        }
+      }
+    ]
   }
 }
 
