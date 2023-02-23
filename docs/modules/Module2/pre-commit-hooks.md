@@ -1,24 +1,22 @@
 ---
 title: Pre-commit hooks
-parent: Module 2 - Introduction and Pre-requisites
+parent:  Module 2 - Develop phase
 has_children: false
-nav_order: 3
+nav_order: 2
 ---
 
 # Module 2: Develop - Pre-commit hooks
 
-It's a best practice to establish checks into your repositories before and right after commits happen to catch a potential security vulenerabilty, Git pre-commit hooks allow you to check for sensitive information within your application source code and prevent a commit from happening if a security issue is found. The pre-commit frameork provides built-in hooks that can be easily configured for a specific project, for example, there are pre-built hooks to scan for secrets, private keys and credentials and prevent a commit if any of these issues are found. Their are also third party pre-commit hooks that can be used for security use cases.
+## Lab Module 2b - Install and configure a secrets detection pre-commit hook.
 
-
-### Using pre-commit hooks
 The pre-commit framework is a client side copmonent and needs to be setup on your local machine before it can be used. The framework can be installed by using the instructions provided here -> https://pre-commit.com/#install  
 
 Note: For Windows users, miniconda is a minimum installer package that works well and was used for this lab exercise, you can find the install packages here -> https://docs.conda.io/en/latest/miniconda.html
 
-1. Install pre-commit frameowkr using the links above
+1. Install pre-commit frameowrk using the links above
 
 2. Add a pre-commit configuration to your git project
-    1. create a file called .pre-commit-config.yaml, a simple, minimal config can be as follows
+    1. create a file called .pre-commit-config.yaml, this is a simple, minimal config to enable secrets detection.
       ```
         repos:
           repo: https://github.com/pre-commit/pre-commit-hooks
@@ -31,11 +29,11 @@ Note: For Windows users, miniconda is a minimum installer package that works wel
          pre-commit install
       ```
 
-3. (Optional step) This is for an initial setup only and it's usually a good idea to run the hooks against all of your project files when adding new hooks, usually a pre-commit hook will only run on the changed files during a git commit
+3. (Optional step) This is for an initial setup only but it's usually a good idea to run the hooks against all of your project files when adding new hooks, usually a pre-commit hook will only run on the changed files during a git commit
    ```
      pre-commit run --all-files
    ```
-4. Simulate a pre-commit hook check by introducing a private key within your source repo, in this example, we are using a private key stored as a kubernetes secret in secret.yaml
+4. Simulate a pre-commit hook check by introducing a private key within your source project, in this example, we are using a private key stored as a kubernetes secret in secret.yaml
 
    ```
     apiVersion: v1
@@ -58,12 +56,12 @@ Note: For Windows users, miniconda is a minimum installer package that works wel
        r2R/Rn1uchUL8ru0B2OVkg==
        -----END DSA PRIVATE KEY-----
     ```
-5. Commit your secret file to your repo
+5. Commit your secret file to your project's git repository
    ```
       git commit -m "created k8s secret"
    ```
 
-6. The pre-commit hook -detect-private-key' should be triggered and should not allow the commit to happen, you should see an error as displayed below
+6. The pre-commit hook -detect-private-key' should be triggered and should not allow the commit to happen, you should see an error as displayed below.
 
    -![pre-commit hook detection](../../assets/images/module2/pre-commit-detect.png)
 
@@ -85,7 +83,7 @@ Note: For Windows users, miniconda is a minimum installer package that works wel
 ## pre-commit hook limitations
 - Pre-commit framework is a client side framework and as such is not required for developers to commit their code to a remote repository
     - developers can also bypass the pre-commit hooks by typing --no-verify during the commit. It is therfore essential to implement post commit checks, server-side checks such as enabling secrets-detection in a GitHub repository.
-- The built-n 'detect-private-key' hook has limited scope to, additional hooks for secrets detection such as gitguardian may be used
+- The built-in 'detect-private-key' hook has limited scope to, additional hooks for secrets detection such as gitguardian may be used
 - pre-commit hooks have limited scope in general and are nor a replacment for static/dynamic analysis (SAST/DAST) or component scanning (SCA)
 
 
