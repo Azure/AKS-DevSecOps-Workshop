@@ -2,7 +2,7 @@
 title: Lab - Workload Identity
 parent: Module 1 - Plan phase
 has_children: false
-nav_order: 1
+nav_order: 2
 ---
 # Module 1 - Workload Identity
 
