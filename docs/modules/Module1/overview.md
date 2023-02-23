@@ -1,8 +1,8 @@
 ---
-title: Module 1 - Plan phase overview
+title: Plan phase overview
 parent: Module 1 - Plan phase
 has_children: false
-nav_order: 2
+nav_order: 1
 ---
 
 ## Plan phase

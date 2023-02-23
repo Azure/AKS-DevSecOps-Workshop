@@ -2,7 +2,7 @@
 title: Lab - Workload Identity
 parent: Module 1 - Plan phase
 has_children: false
-nav_order: 1
+nav_order: 2
 ---
 # Module 1 - Workload Identity
 
@@ -84,20 +84,14 @@ az keyvault set-policy --name "${KEYVAULT_NAME}" --secret-permissions get --spn 
 ```
 3. Create a Secret in Keyvault
 ```bash
+export USERID=$(az ad signed-in-user show --query id -o tsv)
+az keyvault set-policy --name "${KEYVAULT_NAME}" --secret-permissions list set get --object-id $USERID
 az keyvault secret set --vault-name "${KEYVAULT_NAME}" \
        --name "${KEYVAULT_SECRET_NAME}" \
        --value "LevelUp Lab Secret\!"
 ```
 
-#### Create a Service Account and Establish Federated Identity
-
-<!--
-1. Connect to your AKS cluster
-
-```bash
-az aks get-credentials --resource-group $RG_NAME  --name $CLUSTER_NAME --admin
-```
--->
+### Create a Service Account and Establish Federated Identity
 
 1. Create/Deploy Service Account K8S YAML. Note the annotations and labels required for this service account to leverage Workload Identity.
 ```bash
@@ -125,11 +119,7 @@ After the federation is setup, navigate to your cluster resource group, and you 
 
 ![Managed Identity](../../assets/images/module1/ManagedIdentity.png)
 
-#### Deploy Sample workload & Test
-
-<!--
-Internal note: Should this de deployed by github action instead?
---->
+### Deploy Sample workload & Test
 
 The following YAML to deploy a sample .net application that writes to the log the content of the secret inside keyvault. The Go application expects two environment variables for the Kevault URL and the Keyvault secret name references. You can find source code for different programming languages that implement MSAL and KeyVault integration [here](https://github.com/Azure/azure-workload-identity/tree/main/examples).
 
