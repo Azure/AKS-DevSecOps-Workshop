@@ -2,7 +2,7 @@
 title: Lab - Workload Identity
 parent: Module 1 - Plan phase
 has_children: false
-nav_order: 2
+nav_order: 1
 ---
 # Module 1 - Workload Identity
 
@@ -123,7 +123,7 @@ After the federation is setup, navigate to your cluster resource group, and you 
 
 ### Deploy Sample workload & Test
 
-The following YAML to deploy a sample .net application that writes to the log the content of the secret inside keyvault. The Go application expects two environment variables for the Kevault URL and the Keyvault secret name references. You can find source code for different programming languages that implement MSAL and KeyVault integration [here](https://github.com/Azure/azure-workload-identity/tree/main/examples).
+The following YAML deploys a sample .net application that writes to the log the content of the secret inside keyvault. The Go application expects two environment variables for the Kevault URL and the Keyvault secret name references. You can find source code for different programming languages that implement MSAL and KeyVault integration [here](https://github.com/Azure/azure-workload-identity/tree/main/examples).
 
 Note the following required annotations on the K8S YAML configuration:
 
