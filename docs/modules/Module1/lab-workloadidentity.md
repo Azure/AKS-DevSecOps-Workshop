@@ -94,7 +94,8 @@ az keyvault secret set --vault-name "${KEYVAULT_NAME}" \
 ### Create a Service Account and Establish Federated Identity
 
 1. Create/Deploy Service Account K8S YAML. Note the annotations and labels required for this service account to leverage Workload Identity.
-```bash
+   
+```
 export SERVICE_ACCOUNT_NAME="workload-identity-sa"
 export SERVICE_ACCOUNT_NAMESPACE="default"
 
@@ -130,7 +131,8 @@ Note the following required annotations on the K8S YAML configuration:
 - serviceAccountName: ${SERVICE_ACCOUNT_NAME}
 
 1. Execute: 
-```bash
+   
+```
 export KEYVAULT_URL="$(az keyvault show -g ${RG_NAME} -n ${KEYVAULT_NAME} --query properties.vaultUri -o tsv)"
 
 cat <<EOF | kubectl apply -f -
@@ -160,7 +162,6 @@ kubectl logs quick-start
 ```
 If the pod communication to the KeyVault was successful, you will see the following message:
 ![Pod Logs](../../assets/images/module1/podlogs.png)
-
 3. Inspect the additional environment variables and volumeMounts created:
 ```bash
 kubectl get pod quick-start -o yaml
