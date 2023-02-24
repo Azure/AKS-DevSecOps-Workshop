@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title th:text="#{books.title}"></title>
+  <meta charset="utf-8"></meta>
+  <meta name="viewport" content="width=device-width, initial-scale=1"></meta>
+  <link rel="shortcut icon" href="static/images/favicon.ico"/>
+  <link type="text/css" rel="stylesheet" th:href="@{static/bootstrap-3.4.1-dist/css/bootstrap.min.css}"/>
+  <style>
+    html, body {
+      height: 100%;
+    }
+
+    .navbar {
+      margin-bottom: 20px;
+      border-radius: 0;
+    }
+
+    footer {
+      background-color: #f2f2f2; /* #f2f2f2 #ffffff */
+      padding: 25px;
+    }
+
+    .emoji {
+      width: 22px;
+      height: 22px;
+    }
+
+    .thumbnail {
+      border: 0 none;
+      box-shadow: none;
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#"><img class="emoji" src="/static/images/invertocat.svg" th:alt="#{books.title}"/></a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav">
+        <li><a href="#">Home</a></li>
+        <li><a href="#">Books</a></li>
+        <li class="active"><a href="#">Favorites</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="#"><span class="glyphicon glyphicon-user"></span> Your Account</a></li>
+        <li><a href="#"><span class="glyphicon glyphicon-shopping-cart"></span> Cart</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-10 col-md-offset-1">
+      <table class="table table-hover">
+        <thead>
+        <tr>
+          <th th:text="#{books.intro}" colspan="3"/>
+        </tr>
+        </thead>
+        <tbody>
+        <div th:each="book, i : ${books}">
+          <tr>
+            <td class="col-sm-8 col-md-6">
+              <div class="media">
+                <a class="thumbnail pull-left" href="#"> <img class="media-object"
+                                                              th:src="'/static/images/covers/' + ${book.cover}"
+                                                              style="width: 72px; height: 72px;"/></a>
+                <div class="media-body" th:inline="text">
+                  <h4 class="media-heading"><a href="#">[[${book.title}]]</a></h4>
+                  <h5 class="media-heading"> by <a href="#">[[${book.author}]]</a></h5>
+                  <span>Status: </span><span class="text-success"><strong>In Stock</strong></span>
+                </div>
+              </div>
+            </td>
+            <td class="col-sm-1 col-md-1 text-center"><strong>$13.99</strong></td>
+            <td class="col-sm-1 col-md-1">
+              <button type="button" class="btn btn-success">
+                Add to cart
+              </button>
+            </td>
+          </tr>
+        </div>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<footer class="container-fluid text-center navbar-fixed-bottom">
+  <p>From <img class="emoji" src="/static/images/octocat.png"/> with <img class="emoji" src="/static/images/heart.png"/></p>
+  <form class="form-inline">Get favorites:
+    <input type="email" class="form-control" size="50" placeholder="Email Address"></input>
+    <button type="button" class="btn btn-danger">Sign Up</button>
+  </form>
+  <div>
+    <p th:text="'Version: ' + ${version}"></p>
+  </div>
+</footer>
+
+</body>
+</html>
