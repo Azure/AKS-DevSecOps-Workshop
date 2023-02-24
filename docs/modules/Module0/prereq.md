@@ -50,7 +50,9 @@ az group create --name $resourceGroupName --location $location
 1. Create an Azure AD application
 
    ```bash
-   appId=$(az ad app create --display-name myOidcApp --query appId --output tsv)
+   uniqueAppName=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c10 ; echo '')
+   echo $uniqueAppName
+   appId=$(az ad app create --display-name $uniqueAppName --query appId --output tsv)
    echo $appId
    ```
 
