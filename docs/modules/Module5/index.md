@@ -4,7 +4,7 @@ In this module you will learn how to operate and monitor Azure Kubernetes Servic
 ## Getting Started
 In order to complete the hands-on portion of this module, you will need an Azure Kuberentes Service Cluster as described in the Module 0 Prerequisites.  You will also need a Bash Shell, the Azure CLI and the following environment variables:
 
-```
+```bash
 # replace bracketed values with names from your environment
 GROUP="[AKS-CLUSTER-RESOURCE-GROUP-NAME]"
 CLUSTER="[AKS-CLUSTER-NAME]"
@@ -12,13 +12,13 @@ WORKSPACE="[DESIRED-LOG-ANALYTICS-WORKSPACE-NAME]"
 ``` 
 
 Next, for timing reasons, let's jump ahead a bit and make sure our Azure Subscription is ready to use Azure Policy.  To do this, check to see if Microsoft.PolicyInsights is registered:
-```
+```bash
 az provider show --namespace Microsoft.PolicyInsights
 ```
 
 If the provider is not present, you must register it:
 
-```
+```bash
 az provider register --namespace Microsoft.PolicyInsights
 ```
 
@@ -30,39 +30,39 @@ Container Insights is designed to store its data in a [Log Analytics workspace](
 
 Here, let's begin by creating a Log Analytics workspace in order to support Container Insights.  Right now, we will do this using the Azure CLI.  Later, we will augment our Bicep templates in order to perform this same work.
 
-```
+```bash
 az monitor log-analytics workspace create --resource-group $GROUP --workspace-name $WORKSPACE
 WORKSPACEID=$(az monitor log-analytics workspace show --resource-group $GROUP --workspace-name $WORKSPACE --query id -o tsv)
 ```
 
 Now, let's augment our cluster and enable Container Insights.
 
-```
+```bash
 az aks enable-addons -a monitoring --resource-group $GROUP --name $CLUSTER --workspace-resource-id $WORKSPACEID
 ```
 
 Let's verify that the Container Insights agent and solution were successfully deployed.  First, we'll verify the daemonset was deployed:
 
-```
+```bash
 kubectl get daemonset ama-logs --namespace=kube-system
 ```
 
 The output should resemble the following:
 
-```
+```bash
 NAME       DESIRED   CURRENT   READY   UP-TO-DATE   AVAILABLE   NODE SELECTOR   AGE
 ama-logs   3         3         3       3            3           <none>          45m
 ```
 
 Next, we'll verify that the deployment was created:
 
-```
+```bash
 kubectl get deployment ama-logs-rs --namespace=kube-system
 ```
 
 The output should resemble the following:
 
-```
+```bash
 NAME          READY   UP-TO-DATE   AVAILABLE   AGE
 ama-logs-rs   1/1     1            1           47m
 ```
@@ -81,20 +81,20 @@ Now, let's take a moment and test Container Insights by applying some load to ou
 
 First, let's create a namespace to hold our work.
 
-```
+```bash
 kubectl create namespace containerinsightstest
 kubectl config set-context --current --namespace containerinsightstest
 ```
 
 Next, let's run an interactive bash Pod on the cluster:
 
-```
+```bash
 kubectl run test-shell --rm -i --tty --image ubuntu -- bash
 ```
 
 Now, within the test-shell Pod, update, install and run stress:
 
-```
+```bash
 apt update
 apt install stress
 stress -c 10
@@ -126,13 +126,13 @@ Here, you can also see a live stream of the container console and events.
 
 Return to test-shell and type ctrl-c to terminate stress.  Then, exit the pod.
 
-```
+```bash
 exit
 ```
 
 Now, let's clean our cluster:
 
-```
+```bash
 kubectl delete namespace containerinsightstest
 kubectl config set-context --current --namespace default
 ```
@@ -143,7 +143,7 @@ Container Insights provides excellent visibility within our Kubernetes Clusters.
 
 Use the following CLI command to turn begin streaming select diagnostics data into Log Analytics
 
-```
+```bash
 CLUSTERID=$(az aks show --resource-group $GROUP --name $CLUSTER --query id -o tsv)
 echo '['>diag.config
 echo '{"category": "cluster-autoscaler", "enabled": true},'>>diag.config
@@ -170,7 +170,7 @@ Now that we have enabled Container Insights, let's go back and update our Bicep 
 
 First, add the Log Analytics workspace to the template:
 
-```
+```bash
 // Parameters...
 
 @description('Log Analytics Workspace name')
@@ -187,7 +187,7 @@ resource workspace 'Microsoft.OperationalInsights/workspaces@2022-10-01' = {
 
 Next, adjust the AKS cluster and enable Container Insights:
 
-```
+```bash
 // Inside Cluster Definition; add the following to properties
 
 addonProfiles: {
@@ -204,7 +204,7 @@ addonProfiles: {
 
 Finally, add in Diagnostics at the end of the template:
 
-```
+```bash
 resource diag01 'Microsoft.Insights/diagnosticSettings@2021-05-01-preview' = {
     name: 'diag01'
     scope: aks
@@ -275,30 +275,30 @@ Azure Policy is a feature of the Azure Resource Management Platform which allows
 ### Enable Azure Policy for Containers
 
 To begin, check to see if Microsoft.PolicyInsights is registered in your Azure Subscription:
-```
+```bash
 az provider show --namespace Microsoft.PolicyInsights
 ```
 
 If the provider is not present, you must register it:
 
-```
+```bash
 az provider register --namespace Microsoft.PolicyInsights
 ```
 
 Next, let's return to the AKS Cluster and install the add-on:
 
-```
+```bash
 az aks --resource-group $GROUP --name $CLUSTER enable-addons azure-policy
 ```
 
 Then, verify that the add-on has been installed:
 
-```
+```bash
 az aks show --resource-group $GROUP --name $CLUSTER --query addonProfiles.azurepolicy
 ```
 
 The output should resemble the following:
-```
+```bash
 {
     // ...
     "enabled": true,
@@ -336,26 +336,26 @@ Once the Initiative is in place, you can test it out by doing the following:
 
 First, let's create a namespace to hold our work.
 
-```
+```bash
 kubectl create namespace azurepolicytest
 kubectl config set-context --current --namespace azurepolicytest
 ```
 
 Next, let's run an interactive bash Pod on the cluster in privileged mode:
 
-```
+```bash
 kubectl run test-shell --rm -i --tty --privileged=true --image ubuntu -- bash
 ```
 
 This previous command should fail due to our new Azure Policy for Kubernetes Initiative.
 
-```
+```bash
 Error from server (Forbidden): admission webhook "validation.gatekeeper.sh" denied the request: [azurepolicy-k8sazurev2noprivilege-bba3aab5a745b0e81725] Privileged container is not allowed: test-shell, securityContext: {"privileged": true}
 ```
 
 Now, let's clean up our cluster:
 
-```
+```bash
 kubectl delete namespace azurepolicytest
 kubectl config set-context --current --namespace default
 ```
@@ -366,7 +366,7 @@ Now that we have enabled Azure Policy for Kubernetes, let's go back and update o
 
 Add the following to your Bicep template:
 
-```
+```bash
 // add the following to addonProfiles
 "azurepolicy": {
     "enabled": true
@@ -413,7 +413,7 @@ Here, you have the ability to toggle automatic installation/application of Defen
 
 Now, let's use the CLI in order to check and see if our cluster is enrolled in Defender for Containers.  If not, we'll take steps to fix it.  Return to your command line and issue the following commands:
 
-```
+```bash
 kubectl get pods -n kube-system
 ```
 
@@ -423,7 +423,7 @@ Check the output of this command.  You should see two Defender profile component
 
 You may also be interested to see the associated deployment:
 
-```
+```bash
 kubectl get deployment -n kube-system
 ```
 
@@ -432,7 +432,7 @@ The above should include:
 
 If, for some reason, the above components are not present on your cluster, you may install them by issuing the following command.  Then, return to the previous verification steps to make sure everything is in order.
 
-```
+```bash
 az aks update --resource-group $GROUP --name $CLUSTER --enable-defender
 ```
 
@@ -440,13 +440,13 @@ az aks update --resource-group $GROUP --name $CLUSTER --enable-defender
 
 Now that Defender for Containers is enabled in our cluster, let's simulate a security alert.  Run the following command:
 
-```
+```bash
 kubectl get pods --namespace=asc-alerttest-662jfi039n
 ```
 
 The above is a test command that is designed to trigger a test alert.  The following output is expected:
 
-```
+```bash
 No resources found in asc-alerttest-662jfi039n namespace.
 ```
 
@@ -464,7 +464,7 @@ Near the top of the screen, you will see that there is at least one security ale
 
 We can also test the Security Alerting facility by executing a test command within a running pod on our cluster.  Return to the command line and execute the following procedure to trigger another test alert:
    
-```
+```bash
 kubectl create namespace defendertest
 kubectl config set-context --current --namespace defendertest
 kubectl run test-shell --rm -i --tty --image ubuntu -- bash
@@ -472,7 +472,7 @@ kubectl run test-shell --rm -i --tty --image ubuntu -- bash
 
 Within test-shell:
 
-```
+```bash
 cp /bin/echo ./asc_alerttest_662jfi039n
 ./asc_alerttest_662jfi039n testing eicar pipe
 exit
@@ -480,7 +480,7 @@ exit
 
 Original console:
 
-```
+```bash
 kubectl delete namespace defendertest
 kubectl config set-context --current --namespace default
 ```
@@ -493,7 +493,7 @@ Return to Defender for Cloud in the Azure Portal and monitor Security Alerts.  W
 
 Finally, let's adjust the cluster's Bicep template in order to reflect these changes:
 
-```
+```bash
 // ...
 // Enable defender for containers by adding the following to the cluster's properties
 // you will need the resource id for the log analytics workspace
