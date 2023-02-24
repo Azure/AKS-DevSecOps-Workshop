@@ -113,6 +113,7 @@ az group create --name $resourceGroupName --location $location
   resourceGroupName="rg-aks-gha"
   location="eastus"
   az group create --name $resourceGroupName --location $location
+  ```
 
 1. Deploy the AKS cluster bicep template:
 
