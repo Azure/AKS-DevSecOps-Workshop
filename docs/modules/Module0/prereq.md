@@ -66,7 +66,7 @@ az group create --name $resourceGroupName --location $location
    ```bash
    subscriptionId=$(az account show --query id --output tsv)
    echo $subscriptionId
-   az role assignment create --role contributor --subscription $subscriptionId --assignee-object-id  $assigneeObjectId --assignee-principal-type ServicePrincipal --scope /subscriptions/$subscriptionId/resourceGroups/$resourceGroupName
+   az role assignment create --role contributor --subscription $subscriptionId --assignee-object-id  $assigneeObjectId --assignee-principal-type ServicePrincipal --scope /subscriptions/$subscriptionId
    ```
 
 4. Configure a federated identity credential on the Azure AD app.
