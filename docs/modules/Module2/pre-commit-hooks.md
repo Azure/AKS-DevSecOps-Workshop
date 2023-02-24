@@ -7,13 +7,22 @@ nav_order: 2
 
 # Module 2: Develop - Pre-commit hooks
 
-## Lab Module 2b - Install and configure a secrets detection pre-commit hook.
+## Lab Module 2b - Install and configure a 'private key' detection pre-commit hook.
 
-The pre-commit framework is a client side copmonent and needs to be setup on your local machine before it can be used. The framework can be installed by using the instructions provided here -> https://pre-commit.com/#install  
+The pre-commit framework is a client side copmonent and needs to be setup on your local machine before it can be used. 
 
-Note: For Windows users, miniconda is a minimum installer package that works well and was used for this lab exercise, you can find the install packages here -> https://docs.conda.io/en/latest/miniconda.html
+Note: For Windows users, miniconda is a minimum installer package that works well and was used for this lab exercise, you can find the install packages here -> [windows pre-commit install](https://docs.conda.io/en/latest/miniconda.html)
 
-1. Install pre-commit frameowrk using the links above
+1. Install pre-commit frameowrk using the links above if you are on Windows, for WSL/Linux, you can install pre-commit using the command line below
+```
+   sudo apt install pre-commit
+```
+
+```
+   /* validate the install was succesful */
+
+   pre-commit --version
+```
 
 2. Add a pre-commit configuration to your git project
     1. create a file called .pre-commit-config.yaml, this is a simple, minimal config to enable secrets detection.
@@ -29,7 +38,7 @@ Note: For Windows users, miniconda is a minimum installer package that works wel
          pre-commit install
       ```
 
-3. (Optional step) This is for an initial setup only but it's usually a good idea to run the hooks against all of your project files when adding new hooks, usually a pre-commit hook will only run on the changed files during a git commit
+3. (Optional step) This is for an initial setup only but it's usually a good idea to run the hooks against all of your project files when adding a new hooks, usually a pre-commit hook will only run on the changed files during a git commit
    ```
      pre-commit run --all-files
    ```
@@ -65,7 +74,7 @@ Note: For Windows users, miniconda is a minimum installer package that works wel
 
    -![pre-commit hook detection](../../assets/images/module2/pre-commit-detect.png)
 
-7. (Optional), add additional pre-commit hooks for enhanced secret detection, git guardian offers a pre-commit hook that can detect upto 800 common secret configurations. More info can be found here..https://docs.gitguardian.com/ggshield-docs/integrations/git-hooks/pre-commit  A sample configuration is hsown below, note: you will require an API key that must be set as an environment varaible before git guardian pre-commit hook can be used
+7. (Optional), add additional pre-commit hooks for enhanced secret detection, git guardian offers a pre-commit hook that can detect upto 800 common secret configurations. More info can be found here..https://docs.gitguardian.com/ggshield-docs/integrations/git-hooks/pre-commit  A sample configuration is shown below, note: you will require an API key that must be set as an environment varaible before git guardian pre-commit hook can be used
 ```
    repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
@@ -83,8 +92,8 @@ Note: For Windows users, miniconda is a minimum installer package that works wel
 ## pre-commit hook limitations
 - Pre-commit framework is a client side framework and as such is not required for developers to commit their code to a remote repository
     - developers can also bypass the pre-commit hooks by typing --no-verify during the commit. It is therfore essential to implement post commit checks, server-side checks such as enabling secrets-detection in a GitHub repository.
-- The built-in 'detect-private-key' hook has limited scope to, additional hooks for secrets detection such as gitguardian may be used
-- pre-commit hooks have limited scope in general and are nor a replacment for static/dynamic analysis (SAST/DAST) or component scanning (SCA)
+- The built-in 'detect-private-key' hook has limited scope to private keys only, additional hooks for secrets detection such as gitguardian may be used for a more comprehensive detection
+- pre-commit hooks have limited scope in general and are nor a replacment for static/dynamic analysis (SAST/DAST) or for component scanning (SCA). Use the GitHub advanced security settings to enable a comprehensive analysis.
 
 
 

@@ -28,7 +28,7 @@ Install the VS Code security extension to analyze your application code and depe
 ## Configure VS Code project for security analysis
  Download the sample OWASP vulnerable web application and anylze using the Snyk security extension 
 
-1. Clone the OWASP WebGoat repo from GitHub public repo (https://github.com/WebGoat/WebGoat)  The webGoat application is a sample web application that highlights many of the common flaws found in web facing applications as determined by the OWASP Top Ten list.
+1. Clone the OWASP WebGoat repo from GitHub public repo [OWASP WebGoat](https://github.com/WebGoat/WebGoat)  The WebGoat application is a sample web application that highlights many of the common security flaws found in web facing applications as determined by the OWASP Top Ten list. **NOTE: Please do not deploy this application as a public facing application on the Internet!!**
    ``` 
     git clone https://github.com/WebGoat/WebGoat.git 
    ```
