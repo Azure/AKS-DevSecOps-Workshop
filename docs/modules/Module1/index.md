@@ -8,12 +8,15 @@ has_children: true
 
 ## Plan phase
 
-The plan phase generally has the least amount of automation but will have important security implications that significantly impact later DevOps lifecycle stages. This stage involves collaboration between security, development, and operations teams. Including security stakeholders in this phase of designing and planning ensures security requirements and security issues are appropriately accounted for or mitigated. 
-Best Practice – AKS Secure application platform design
+The plan phase generally has the least amount of automation but will have important security implications that significantly impact later DevOps lifecycle stages. This stage involves collaboration between security, development, and operations teams. Including security stakeholders in this phase of designing and planning ensures security requirements and security issues are appropriately accounted for or mitigated.
 
-## Best Practice - Secure Platform Design
+## Best Practice - AKS Secure platform design
 
 Building a secure AKS hosted platform is an important step to ensure security is built into the system at every layer, starting with the platform itself. This can include components both internal to the cluster such as runtime security and policy agents, as well as components that are external to AKS such as network firewalls, and container registries. For in-depth information on these topics, visit the AKS Landing zone accelerator, which contains critical design areas such as security, identity, and network topology.
+
+References:
+- [AKS Secure Baseline](https://learn.microsoft.com/en-us/azure/architecture/reference-architectures/containers/aks/baseline-aks)
+- [AKS Landing Zone](https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/scenarios/app-platform/aks/landing-zone-accelerator)
 
 ## Best Practice - Threat Modeling
 
