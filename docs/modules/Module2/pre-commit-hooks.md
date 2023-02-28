@@ -17,6 +17,10 @@ Note: For Windows users, miniconda is a minimum installer package that works wel
 ```
    sudo apt install pre-commit
 ```
+if you already have pip (Python package installer), you can also use the following command for installation
+```
+   pip install pre-commit
+```
 
 ```
    /* validate the install was succesful */
@@ -29,9 +33,9 @@ Note: For Windows users, miniconda is a minimum installer package that works wel
       ```
         repos:
           repo: https://github.com/pre-commit/pre-commit-hooks
-        rev: v2.3.0
+          rev: v2.3.0
           hooks:
-           - id: detect-private-key
+          - id: detect-private-key
       ```
       2. Commit the config file and install the pre-commit git hooks using the following command, this is only required when you are installing/using a new hook.
       ```
@@ -80,12 +84,12 @@ Note: For Windows users, miniconda is a minimum installer package that works wel
 -   repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v2.3.0
     hooks:
-    -   id: detect-private-key
+    -  id: detect-private-key
 -   repo: https://github.com/gitguardian/ggshield
     rev: v1.14.3
     hooks:
-      - id: ggshield
-        language_version: python3
+    -  id: ggshield
+       language_version: python3
 ```
 
 

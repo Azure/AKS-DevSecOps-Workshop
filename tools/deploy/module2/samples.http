@@ -1,0 +1,26 @@
+//http sample requests, can be executed directly in VSCode using the REST client extension
+
+//create a new employee
+POST http://localhost:8080/employees
+content-type: application/json
+
+{
+  "id":1003, 
+  "name":"Jane Doe", 
+  "designation":"CSA",
+  "expertise":"Modern apps"
+}
+###
+
+//search for an specific employee
+GET http://localhost:8080/employees/1003
+
+###
+
+//get all employees
+GET http://localhost:8080/employees
+
+###
+
+//search for employees using dynamic sql, "employee" table name is passed as a parameter
+GET http://localhost:8080/employeesByDynamicSql/employee
