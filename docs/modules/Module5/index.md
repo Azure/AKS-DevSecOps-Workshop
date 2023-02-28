@@ -1,6 +1,27 @@
 # Module 5: Operate and Monitor AKS
 In this module you will learn how to operate and monitor Azure Kubernetes Service.  You will learn about [Container Insights](https://learn.microsoft.com/en-us/azure/azure-monitor/containers/container-insights-overview), [Azure Policy for Kubernetes](https://learn.microsoft.com/en-us/azure/governance/policy/concepts/policy-for-kubernetes), and [Defender for Containers](https://learn.microsoft.com/en-us/azure/defender-for-cloud/defender-for-containers-introduction).
 
+## Getting Started
+In order to complete the hands-on portion of this module, you will need an Azure Kuberentes Service Cluster as described in the Module 0 Prerequisites.  You will also need a Bash Shell, the Azure CLI and the following environment variables:
+
+```
+# replace bracketed values with names from your environment
+GROUP="[AKS-CLUSTER-RESOURCE-GROUP-NAME]"
+CLUSTER="[AKS-CLUSTER-NAME]"
+WORKSPACE="[DESIRED-LOG-ANALYTICS-WORKSPACE-NAME]"
+``` 
+
+Next, for timing reasons, let's jump ahead a bit and make sure our Azure Subscription is ready to use Azure Policy.  To do this, check to see if Microsoft.PolicyInsights is registered:
+```
+az provider show --namespace Microsoft.PolicyInsights
+```
+
+If the provider is not present, you must register it:
+
+```
+az provider register --namespace Microsoft.PolicyInsights
+```
+
 ## Container Insights
 Container Insights is a feature designed to monitor the performance of container workloads deployed to the cloud. It gives you performance visibility by collecting memory and processor metrics from controllers, nodes, and containers that are available in Kubernetes through the Metrics API. After you enable monitoring from Kubernetes clusters, metrics and Container logs are automatically collected for you through a containerized version of the Log Analytics agent for Linux. Metrics are sent to the [metrics database in Azure Monitor](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/data-platform-metrics). Log data is sent to your [Log Analytics workspace](https://learn.microsoft.com/en-us/azure/azure-monitor/logs/log-analytics-workspace-overview).
 
@@ -36,7 +57,7 @@ ama-logs   3         3         3       3            3           <none>          
 Next, we'll verify that the deployment was created:
 
 ```
-kubectl get deployment ama-logs-rs --namespace-kube-system
+kubectl get deployment ama-logs-rs --namespace=kube-system
 ```
 
 The output should resemble the following:
@@ -253,13 +274,18 @@ Azure Policy is a feature of the Azure Resource Management Platform which allows
 
 ### Enable Azure Policy for Containers
 
-To begin, you must first register the resource provider with your Azure subscription:
+To begin, check to see if Microsoft.PolicyInsights is registered in your Azure Subscription:
+```
+az provider show --namespace Microsoft.PolicyInsights
+```
+
+If the provider is not present, you must register it:
 
 ```
 az provider register --namespace Microsoft.PolicyInsights
 ```
 
-Next, install the add-on:
+Next, let's return to the AKS Cluster and install the add-on:
 
 ```
 az aks --resource-group $GROUP --name $CLUSTER enable-addons azure-policy
@@ -271,12 +297,12 @@ Then, verify that the add-on has been installed:
 az aks show --resource-group $GROUP --name $CLUSTER --query addonProfiles.azurepolicy
 ```
 
-The output should match the following:
+The output should resemble the following:
 ```
 {
-    "config": null,
+    // ...
     "enabled": true,
-    "identity": null
+    // ...
 }
 ```
 

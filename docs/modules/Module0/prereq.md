@@ -50,7 +50,9 @@ az group create --name $resourceGroupName --location $location
 1. Create an Azure AD application
 
    ```bash
-   appId=$(az ad app create --display-name myOidcApp --query appId --output tsv)
+   uniqueAppName=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c10 ; echo '')
+   echo $uniqueAppName
+   appId=$(az ad app create --display-name $uniqueAppName --query appId --output tsv)
    echo $appId
    ```
 
@@ -66,7 +68,7 @@ az group create --name $resourceGroupName --location $location
    ```bash
    subscriptionId=$(az account show --query id --output tsv)
    echo $subscriptionId
-   az role assignment create --role contributor --subscription $subscriptionId --assignee-object-id  $assigneeObjectId --assignee-principal-type ServicePrincipal --scope /subscriptions/$subscriptionId/resourceGroups/$resourceGroupName
+   az role assignment create --role contributor --subscription $subscriptionId --assignee-object-id  $assigneeObjectId --assignee-principal-type ServicePrincipal --scope /subscriptions/$subscriptionId
    ```
 
 4. Configure a federated identity credential on the Azure AD app.
@@ -113,6 +115,7 @@ az group create --name $resourceGroupName --location $location
   resourceGroupName="rg-aks-gha"
   location="eastus"
   az group create --name $resourceGroupName --location $location
+  ```
 
 1. Deploy the AKS cluster bicep template:
 
