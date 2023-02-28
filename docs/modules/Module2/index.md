@@ -26,5 +26,7 @@ Use GitHub Advanced Security scanning capabilities for code scanning and CodeQL.
 The following prerequistes are required to complete the labs in the Develop section
 
 1. Visual Studio Code (VS Code)
-2. GitHub account
-3. Git client
+2. Java JDK 11
+3. Maven
+4. GitHub account
+5. Git client
