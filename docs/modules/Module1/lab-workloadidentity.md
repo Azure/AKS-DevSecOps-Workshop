@@ -164,7 +164,7 @@ If the pod communication to the KeyVault was successful, you will see the follow
 ![Pod Logs](../../assets/images/module1/podlogs.png)
 3. Inspect the additional environment variables and volumeMounts created:
 ```bash
-kubectl get pod quick-start -o yaml
+kubectl describe pod quick-start 
 ```
 You should notice the new environment variables and volume mount, as shown in this screenshot.
 ![Pod YAML](../../assets/images/module1/podyaml.png)
