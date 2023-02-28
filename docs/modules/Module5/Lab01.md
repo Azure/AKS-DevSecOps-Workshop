@@ -1,7 +1,7 @@
 # Module 5: Operate and Monitor AKS - Lab 1
 Here, in this lab, as part of [Module 5: Operate and Monitor](index.md), we will look at [Container Insights](https://learn.microsoft.com/en-us/azure/azure-monitor/containers/container-insights-overview).
 
-Before attempting this lab, please be sure to complete the items described in the [Getting Started](index.md#getting-started) section.
+Before attempting this lab, please be sure to complete the items described in the [Getting Started Section](index.md#getting-started).
 
 ## Container Insights
 Container Insights is a feature designed to monitor the performance of container workloads deployed to the cloud. It gives you performance visibility by collecting memory and processor metrics from controllers, nodes, and containers that are available in Kubernetes through the Metrics API. After you enable monitoring from Kubernetes clusters, metrics and Container logs are automatically collected for you through a containerized version of the Log Analytics agent for Linux. Metrics are sent to the [metrics database in Azure Monitor](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/data-platform-metrics). Log data is sent to your [Log Analytics workspace](https://learn.microsoft.com/en-us/azure/azure-monitor/logs/log-analytics-workspace-overview).
