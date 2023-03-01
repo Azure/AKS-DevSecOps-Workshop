@@ -2,7 +2,7 @@
 title: Lab 3 - Defender for Containers
 parent: Module 5 - Operate and Monitor AKS
 has_children: false
-nav_order: 3
+nav_order: 4
 ---
 
 # Module 5: Lab 3 - Defender for Containers
