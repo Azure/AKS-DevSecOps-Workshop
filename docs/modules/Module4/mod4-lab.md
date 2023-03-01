@@ -5,7 +5,7 @@ The operations team deploys the application to AKS, ensuring that security polic
 
 By following the AKS DevSecOps Deployment process, organizations can ensure that their containerized applications are secure and reliable, and that the development, security, and operations teams are working together effectively to deliver high-quality software.
 
-In this module you will learn a set of foundational methods to secure your app and/or solution to AKS. We invite you to run 2 or all of the labs in the sections below to get familiar with the tools and concepts involved in this process.  
+In this module you will learn a set of foundational methods to secure your app and/or solution to AKS. We invite you to run labs in the sections below to get familiar with the tools and concepts involved in this process.  
 
 ## Environments
 Environments are used to describe a general deployment target like production, staging, or development. When a GitHub Actions workflow deploys to an environment, the environment is displayed on the main page of the repository. 
@@ -21,19 +21,33 @@ You can configure environments with protection rules and secrets. When a workflo
 6. Specify your github handle/username in the list of "Required reviewers". This will set you as user that must review and approve workflow jobs that use this environment.
 7. Click Save protection rules.
 8. Add 3 enviroment secrets by following the next steps:
-    - Under Environment secrets, click Add Secret.
-        - Enter "AZURE_TEST_CLIENT_ID"
+    - Under Environment secrets, click "Add secret".
+        - Enter "TEST_AZURE_CLIENT_ID"
         - Enter the value of <i>$appId</i> retrieved from Module 0.
         - Click Add secret.
         > Note: if you don't have this value saved, you can always retrieve it from the ClientID property of the Managed Identity (default:"workshop-Identity") object deployed in your resource group.  
-    - Under Environment secrets, click Add Secret again.
-        - Enter "AZURE_TEST_TENANT_ID"
+    - Under Environment secrets, click "Add secret" again.
+        - Enter "TEST_AZURE_TENANT_ID"
         - Enter the value of your tenant id.
         - Click Add secret.
-    - Under Environment secrets, click Add Secret again.
-        - Enter "AZURE_TEST_SUBSCRIPTION_ID"
+    - Under Environment secrets, click "Add secret" again.
+        - Enter "TEST_AZURE_SUBSCRIPTION_ID"
         - Enter the value of your subscription id.
         - Click Add secret.
+
+        The result should be similar to this:<br>
+        ![Environment secrets](../../assets/images/module4/environment-secrets.webp)
+
+9. Add 5 environment variables to store the values needed by the workflow to execute its deployment to the test enviroment:
+    - Under Environment variables, click Add variable.
+        - Enter "TEST_AZURE_CONTAINER_REGISTRY"
+        - Enter the name of the Azure Container Registry deployed in your resource group(e.g.: devsecopsacr1        
+        - Click Add variable. 
+    - Repeat the previous steps to add the following enviroment variables:
+        - TEST_CONTAINER_NAME: name of your acr repo (e.g.: testdevsecops) 
+        - TEST_RESOURCE_GROUP: name of your resource group
+        - TEST_CLUSTER_NAME: name of your aks cluster 
+        - TEST_DEPLOYMENT_MANIFEST_PATH: which is the path to the app manifest present in this lab. Therefore, please use   "../../tools/deploy/module4/devsecops-demo.yaml" (or whichever manifest you'd like to use) 
 
 
 ## Managing a branch protection rule
