@@ -68,20 +68,20 @@ az group create --name $resourceGroupName --location $location
    ```bash
    subscriptionId=$(az account show --query id --output tsv)
    echo $subscriptionId
-   az role assignment create --role contributor --subscription $subscriptionId --assignee-object-id  $assigneeObjectId --assignee-principal-type ServicePrincipal --scope /subscriptions/$subscriptionId
+   az role assignment create --role owner --subscription $subscriptionId --assignee-object-id  $assigneeObjectId --assignee-principal-type ServicePrincipal --scope /subscriptions/$subscriptionId
    ```
 
 4. Configure a federated identity credential on the Azure AD app.
 
    You use workload identity federation to configure an Azure AD app registration to trust tokens from an external identity provider (IdP), such as GitHub.
 
-   In [credential.json](../../../tools/deploy/module0/credential.json) file, replace `<your-github-username>` with your GitHub username (in your local repo).
+   In [/tools/deploy/module0/credential.json](../../../tools/deploy/module0/credential.json) file, replace `<your-github-username>` with your GitHub username (in your locally cloned repo).
 
    `"subject": "repo:<your-github-username>/AKS-DevSecOps-Workshop:ref:refs/heads/main",`
 
    If you name your new repository something other than `AKS-DevSecOps-Workshop`, you will need to replace `AKS-DevSecOps-Workshop` above with the name of your repository. Also, if your deployment branch is not `main`, you will need to replace `main` with the name of your deployment branch.
 
-   Then run the following command to create a federated credential for the Azure AD app.
+   Then run the following command from the root folder of the cloned repo to create a federated credential for the Azure AD app.
 
    ```bash
    az ad app federated-credential create --id $appId --parameters tools/deploy/module0/credential.json
@@ -122,9 +122,9 @@ az group create --name $resourceGroupName --location $location
    ```bash
    az deployment group create --template-file tools/deploy/module0/aks.bicep --resource-group $resourceGroupName --parameters location=$location
    az feature register --namespace "Microsoft.ContainerService" --name "EnableWorkloadIdentityPreview"
-   CLUSTER_NAME=$(az aks list --resource-group ${{ secrets.CLUSTER_RESOURCE_GROUP }} --query "[].name" -o tsv)
-   ACR_NAME=$(az acr list --resource-group ${{ secrets.CLUSTER_RESOURCE_GROUP }} --query "[].name" -o tsv)
-   az aks update -n ${{ secrets.CLUSTER_NAME }} -g ${{ secrets.CLUSTER_RESOURCE_GROUP }} --attach-acr ${{ secrets.ACR_NAME }}
+   CLUSTER_NAME=$(az aks list --resource-group $resourceGroupName --query "[].name" -o tsv)
+   ACR_NAME=$(az acr list --resource-group $resourceGroupName --query "[].name" -o tsv)
+   az aks update -n $CLUSTER_NAME -g $resourceGroupName --attach-acr $ACR_NAME
    ```
 
 ## Connect to your cluster
