@@ -1,12 +1,11 @@
 ---
-title: Best Practices
+title: Deploy Best Practices
 parent: Module 4 - Deploy Phase
 has_children: false
 nav_order: 1
 ---
 
 ## Deploy Phase - Best Practices
-
 During the deploy phase, the operations team - in collaboration with the security team - deploys the application to AKS, ensuring that security policies and procedures are applied throughout the deployment process.
 
 By following the AKS DevSecOps practices, organizations can ensure that their containerized applications are secure and reliable, and that the development, security, and operations teams are working together effectively to deliver high-quality software.
