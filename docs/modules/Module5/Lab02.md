@@ -5,7 +5,7 @@ has_children: false
 nav_order: 2
 ---
 
-# Module 5: Operate and Monitor AKS / Lab 2 - Azure Policy
+# Module 5: Lab 2 - Azure Policy
 Here, in this lab, as part of [Module 5: Operate and Monitor](index.md), we will look at [Azure Policy for Kubernetes](https://learn.microsoft.com/en-us/azure/governance/policy/concepts/policy-for-kubernetes).
 
 Before attempting this lab, please be sure to complete the items described in the [Getting Started Section](index.md#getting-started).
