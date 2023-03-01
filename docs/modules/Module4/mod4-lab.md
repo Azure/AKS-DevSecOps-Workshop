@@ -1,3 +1,9 @@
+---
+title: Deploy Lab
+parent: Module 4 - Deploy Phase
+has_children: false
+nav_order: 1
+---
 # Module 4: Deploy - Lab
 AKS (Azure Kubernetes Service) DevSecOps Deployment refers to the process of deploying containerized applications on AKS while ensuring security and collaboration between development, security, and operations teams.
 
