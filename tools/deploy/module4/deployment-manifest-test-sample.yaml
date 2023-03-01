@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: devsecops-mod4-test-app
+spec:
+  containers:
+  - name: devsecops-mod4-nginx-app
+    ports:
+    - containerPort: 80
+    - containerPort: 443
+    resources:
+      requests:
+        cpu: 100m
+        memory: 8Mi
+      limits:
+        cpu: 500m
+        memory: 32Mi
