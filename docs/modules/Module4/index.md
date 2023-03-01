@@ -1,7 +1,6 @@
 ---
-title: Module 4 - Deploy Best Practices
+title: Module 4 - Deploy Phase
 has_children: true
-nav_order: 1
 ---
 # Module 4: Deploy
 
