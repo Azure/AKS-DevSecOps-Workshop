@@ -9,7 +9,7 @@ nav_order: 2
 
 ## Lab 1 - Github DependaBot
 
-### Enable Dependabot alerts and security updates for your repository
+### Enable Dependabot security and version updates for your repository
 
 * Enable Dependabot alerts for your repository
   * Navigate to the **Settings** tab of your repository
@@ -18,13 +18,29 @@ nav_order: 2
 * Enable Dependabot security updates for your repository
   * Click **Enable** next to **Dependabot security updates**
 * Enable Dependabot version updates for your repository
-  * Click **Enable** next to **Dependabot version updates**
+  * Click **Enable** next to **Dependabot version updates** to open a basic `dependabot.yml` configuration file in the `.github` directory of your repository
+  * Add the following configuration to the `dependabot.yml` file
+
+  ```yaml
+  - package-ecosystem: "maven" # See documentation for possible values
+    directory: "/tools/deploy/module3" # Location of package manifests
+  ```
+
+  * Click **Commit changes** to commit the file to the `main` branch
 
 ### Viewing Dependabot alerts and security updates
 
 * Navigate to the **Security** tab of your repository
 * Click **Dependabot alerts** to view the alerts
-* Click **Dependabot security updates** to view the security updates
+![Dependabot Alerts Screenshot](../../assets/images/module3/dependabot-alerts.png)
+* Click on the alert to view the details of the alert, including initiating a pull request for **security version update** 
+* After you enable version updates, the **Dependabot** tab in the **dependency graph** under **Insights** for the repository is populated (it may take few minutes to complete). 
+![Dependabot Tab Screenshot](../../assets/images/module3/dependabot-dependency-graph.png)
+* Click on **Last Checked 4 minutes ago** to see details.
+* Scroll down to see summary of the **Security updates Pull Requests** details.
+![Dependabot Security Updates Screenshot](../../assets/images/module3/dependabot-security-updates-details.png)
+* Navigate to the **Pull requests** tab of your repository to view the pull request initiated by Dependabot
+![Dependabot Pull Request Screenshot](../../assets/images/module3/dependabot-pull-requests.png)
 
 ## Lab 2 - Github Secret Scanning
 
@@ -37,4 +53,7 @@ nav_order: 2
 ### Viewing Secret Scanning results
 
 * Navigate to the **Security** tab of your repository
-* Click **Secret scanning** to view the results
+* Click **Secret scanning** to view the result one file with a Google Key
+![Secret Scanning Alerts Screenshot](../../assets/images/module3/secret-scaning-alert.png)
+* Click on the file name to view the details of the alert, including the remediation steps.
+![Secret ScanningAlerts Detail Screenshot](../../assets/images/module3/secret-scanning-alert-details.png)
