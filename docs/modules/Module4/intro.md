@@ -13,8 +13,8 @@ By following the AKS DevSecOps practices, organizations can ensure that their co
 
 
 ### **Best practice – Control the access and workflow of the deployment pipeline**
-- You can protect important branches by [setting branch protection rules](https://docs.github.com/repositories/configuring-branches-and-merges-in-your-repository/defining-the-mergeability-of-pull-requests/about-protected-branches). These rules define whether collaborators can delete or force push to the branch. They also set requirements for any pushes to the branch, such as passing status checks or a linear commit history.
 - By using [environments](https://docs.github.com/actions/deployment/targeting-different-environments/using-environments-for-deployment) for deployment, you can configure environments with protection rules and secrets.
+- You can protect important branches by [setting branch protection rules](https://docs.github.com/repositories/configuring-branches-and-merges-in-your-repository/defining-the-mergeability-of-pull-requests/about-protected-branches). These rules define whether collaborators can delete or force push to the branch. They also set requirements for any pushes to the branch, such as passing status checks or a linear commit history.
 - You can take advantage of the [Approvals](https://docs.github.com/actions/managing-workflow-runs/reviewing-deployments) and [Gates](https://learn.microsoft.com/en-us/azure/devops/pipelines/release/deploy-using-approvals?view=azure-devops) feature to control the workflow of the deployment pipeline. For example, you can require manual approvals from a security or operations team before a deployment to a production environment.
 
 ###  **Best practice – Secure deployment credentials**
