@@ -69,7 +69,7 @@ The above should include:
 If, for some reason, the above components are not present on your cluster, you may install them by issuing the following command.  Then, return to the previous verification steps to make sure everything is in order.
 
 ```bash
-az aks update --resource-group $GROUP --name $CLUSTER --enable-defender
+az aks update --resource-group $resourceGroupName --name $clusterName --enable-defender
 ```
 
 ### Using Defender for Containers

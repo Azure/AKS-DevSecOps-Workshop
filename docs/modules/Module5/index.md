@@ -45,10 +45,12 @@ Throughout this module, we will implement a subset of the best practices desccri
 In order to complete the hands-on portion of this module, you will need an Azure Kuberentes Service Cluster as described in the Module 0 Prerequisites.  You will also need a Bash Shell, the Azure CLI and the following environment variables:
 
 ```bash
-# replace bracketed values with names from your environment
-GROUP="[AKS-CLUSTER-RESOURCE-GROUP-NAME]"
-CLUSTER="[AKS-CLUSTER-NAME]"
-WORKSPACE="[DESIRED-LOG-ANALYTICS-WORKSPACE-NAME]"
+# Set these variables equal to values from your environment
+resourceGroupName="rg-aks-gha"
+clusterName="devsecops-aks"
+
+# Set workspace name equal to a unique log analytics workspace name
+workspaceName="devsecops-logs" 
 ``` 
 
 Next, for timing reasons, let's jump ahead a bit and make sure our Azure Subscription is ready to use Azure Policy.  To do this, check to see if Microsoft.PolicyInsights is registered:
