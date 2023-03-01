@@ -79,7 +79,14 @@ az ad app federated-credential create --id $appId --parameters tools/deploy/modu
 > Note:
 > 1. The label of the workflow run depends on the Commit message you provided when pushing the changes. 
 > 2. You may notice the status Waiting. This depends on the Environment rule we set in step 6. In fact, you will have to review and approve the workflow execution to allow the workflow to run and have permissions to the environment secrets and variables vital to the execution of the workflow. 
-> 3. If he trigger doesn't start the workflow, you can run the workflow manually by selecting it and click on "Run workflow":
-![Manual dispatch](../../assets/images/module4/workflow-run-manually.webp)
-
-16. Click on the executing workflow 
+> 3. If he trigger doesn't start the workflow, you can run the workflow manually by selecting the workflow and click on "Run workflow".
+16. Once you click on the executing workflow, you should see your running instance waiting for your Review:
+![Manual dispatch](../../assets/images/module4/workflow-waiting-review.webp)
+17. Click on "Review deployments", confirm the checkbox in the popup and "Approve and deploy":
+![Review deployments](../../assets/images/module4/review-deployment-confirm-popup.webp)
+18. Once the workflow is completed, you can verify the deployment of the pod by executing the following command from the shell:
+```bash
+kubectl get pod devsecops-mod4-test-pod 
+```
+The output should be similar to:
+![Pod verify](../../assets/images/module4/kubectl-pod-verify-result.webp)
