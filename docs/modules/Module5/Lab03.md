@@ -5,7 +5,7 @@ has_children: false
 nav_order: 3
 ---
 
-# Module 5: Operate and Monitor AKS - Lab 3
+# Module 5: Operate and Monitor AKS / Lab 3 - Defender for Containers
 Here, in this lab, as part of [Module 5: Operate and Monitor](index.md), we will look at [Defender for Containers](https://learn.microsoft.com/en-us/azure/defender-for-cloud/defender-for-containers-introduction).
 
 Before attempting this lab, please be sure to complete the items described in our [Getting Started Section](index.md#getting-started).

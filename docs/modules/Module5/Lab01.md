@@ -5,7 +5,7 @@ has_children: false
 nav_order: 1
 ---
 
-# Module 5: Operate and Monitor AKS - Lab 1
+# Module 5: Operate and Monitor AKS / Lab 1 - Container Insights
 Here, in this lab, as part of [Module 5: Operate and Monitor](index.md), we will look at [Container Insights](https://learn.microsoft.com/en-us/azure/azure-monitor/containers/container-insights-overview).
 
 Before attempting this lab, please be sure to complete the items described in the [Getting Started Section](index.md#getting-started).
