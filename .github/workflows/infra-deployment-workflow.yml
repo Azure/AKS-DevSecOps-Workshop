@@ -43,4 +43,11 @@ jobs:
       # az feature register for Lab 1
     - name: az feature register
       run: |
-        az feature register --namespace "Microsoft.ContainerService" --name "EnableWorkloadIdentityPreview"  
+        az feature register --namespace "Microsoft.ContainerService" --name "EnableWorkloadIdentityPreview"
+
+      # Attach ACR to AKS
+    - name: attach Azure Container Registry to AKS
+      run: |
+        CLUSTER_NAME=$(az aks list --resource-group ${{ secrets.CLUSTER_RESOURCE_GROUP }} --query "[].name" -o tsv)
+        ACR_NAME=$(az acr list --resource-group ${{ secrets.CLUSTER_RESOURCE_GROUP }} --query "[].name" -o tsv)
+        az aks update -n ${{ secrets.CLUSTER_NAME }} -g ${{ secrets.CLUSTER_RESOURCE_GROUP }} --attach-acr ${{ secrets.ACR_NAME }}      

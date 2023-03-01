@@ -117,10 +117,14 @@ az group create --name $resourceGroupName --location $location
   az group create --name $resourceGroupName --location $location
   ```
 
-1. Deploy the AKS cluster bicep template:
+1. Deploy the AKS cluster bicep template, register the `EnableWorkloadIdentityPreview` feature, and attach ACR to AKS.
 
    ```bash
    az deployment group create --template-file tools/deploy/module0/aks.bicep --resource-group $resourceGroupName --parameters location=$location
+   az feature register --namespace "Microsoft.ContainerService" --name "EnableWorkloadIdentityPreview"
+   CLUSTER_NAME=$(az aks list --resource-group ${{ secrets.CLUSTER_RESOURCE_GROUP }} --query "[].name" -o tsv)
+   ACR_NAME=$(az acr list --resource-group ${{ secrets.CLUSTER_RESOURCE_GROUP }} --query "[].name" -o tsv)
+   az aks update -n ${{ secrets.CLUSTER_NAME }} -g ${{ secrets.CLUSTER_RESOURCE_GROUP }} --attach-acr ${{ secrets.ACR_NAME }}
    ```
 
 ## Connect to your cluster

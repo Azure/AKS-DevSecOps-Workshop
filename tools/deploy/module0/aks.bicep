@@ -60,17 +60,6 @@ resource aks 'Microsoft.ContainerService/managedClusters@2022-09-02-preview' = {
   }
 }
 
-var acrPullRoleDefinitionId = subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '7f951dda-4ed3-4680-a7ca-43fe172d538d')
-resource acrPullRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name: guid(resourceGroup().id, aks.id, acrPullRoleDefinitionId)
-  scope: acr
-  properties: {
-    principalId: aks.properties.identityProfile.kubeletidentity.objectId
-    roleDefinitionId: acrPullRoleDefinitionId
-    principalType: 'ServicePrincipal'
-  }
-}
-
 resource akv 'Microsoft.KeyVault/vaults@2022-07-01' = {
   name: akvName
   location: location
