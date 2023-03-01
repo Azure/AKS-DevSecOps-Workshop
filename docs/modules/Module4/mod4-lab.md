@@ -47,26 +47,39 @@ You can configure environments with protection rules and secrets. When a workflo
         - TEST_CONTAINER_NAME: name of your acr repo (e.g.: testdevsecops) 
         - TEST_RESOURCE_GROUP: name of your resource group
         - TEST_CLUSTER_NAME: name of your aks cluster 
-        - TEST_DEPLOYMENT_MANIFEST_PATH: which is the path to the app manifest present in this lab. Therefore, please use   "../../tools/deploy/module4/devsecops-demo.yaml" (or whichever manifest you'd like to use) 
+        - TEST_DEPLOYMENT_MANIFEST_PATH: which is the path to the app manifest present in this lab. Therefore, please use   "tools/deploy/module4/devsecops-demo.yaml" (or whichever manifest you'd like to use) 
 
+10. In [test-credential.json](../../../tools/deploy/module4/test-credential.json) file, replace `<your-github-username>` with your GitHub username (in your local repo).
 
-## Managing a branch protection rule
-In GitHub, you can create a [branch protection rule](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/defining-the-mergeability-of-pull-requests/managing-a-branch-protection-rule) to enforce certain workflows for one or more branches, such as requiring an approving review or passing status checks for all pull requests merged into the protected branch.
+   `"subject": "repo:<your-github-username>/AKS-DevSecOps-Workshop:environment:test",`
 
-> There is a large number of rules you can set up in the Branch settings. In this exercise, we are going to focus on a limited set due to timelines and intentional simplicity of the lab but we encourage you to explore all the options present in the settings.  
+   >If you have named your new repository something other than `AKS-DevSecOps-Workshop`, you will need to replace `AKS-DevSecOps-Workshop` above with the name of your repository. Also, if your deployment branch is not `main`, you will need to replace `main` with the name of your deployment branch.
 
-### Lab 2 - Creating a branch protection rule
-1. On GitHub.com, navigate to the main page of your repository.
-2. Under your repository name, click Settings. If you cannot see the "Settings" tab, select the  dropdown menu, then click Settings. <br>
-![Settings](../../assets/images/module4/repo-actions-settings.webp "Settings")
-3. In the "Code and automation" section of the sidebar, click "Branches".
-4. Next to "Branch protection rules", click Add rule.
-5. Under "Branch name pattern", you can type the branch name or pattern you want to protect. For this lab, we will type "*" (pattern for <i>any</i> branch) in the textbox in order to apply this set of rules to any branch in your repository. 
-![Branch name pattern](../../assets/images/module4/branch-name-pattern.webp "Branch name pattern") 
-6. Under "Protect matching branches", select Require a pull request before merging.<br>
-![Require pull request](../../assets/images/module4/PR-reviews-required-updated.webp "Require pull request")
+11. Setup additional federated identity credentials specifically for the test enviroment by:
+- retrieving the appId created in module 0. <br>If not saved in your session, you can retrieve the appid specific of this lab by looking at your App Registrations in the Azure Portal (Azure Active Directory section) or by az command. The following command will retrieve a list of all your registered applications (list of displayName + appId).  
+```bash 
+az ad app list --show-mine --query "[].{displayName:displayName appId:appId createdDateTime:createdDateTime}" -o tsv
+```
+> please identify in the list the app registration related to this lab (the one created in Module 0) by recognizing its displayName or its createdDateTime displayed in the output of the previous command. Then use the appId (guid only) to run the following command: 
+```
+appId=<appId from previous command>
+```
+> the appId is a guid with a format similar to this: 00000000-0000-0000-0000-000000000000
+- in the same bash session, run the following command:
+```bash
+az ad app federated-credential create --id $appId --parameters tools/deploy/module4/test-credential.json
+```
+12. Copy [mod4-lab1-deploy-test.yml](../../../tools/tools/deploy/module4/mod4-lab1-deploy-test.yml) to [github/workflow](../../../.github/workflows/) folder.
+13. Modify [text.txt](../../../tools/deploy/module4/text.txt) file and commit & push all changes to trigger the Actions workflow.
+> The workflow is pre-configured to be triggered when any change is pushed to that specific pattern. 
+14. Please monitor the execution of the workflow by navigating to "Actions":
+![Actions](../../assets/images/module4/actions-workflow-execution.webp)
+15. Click on the workflow currently executing:
+![Actions](../../assets/images/module4/worflow-run-executing.webp)
+> Note:
+> 1. The label of the workflow run depends on the Commit message you provided when pushing the changes. 
+> 2. You may notice the status Waiting. This depends on the Environment rule we set in step 6. In fact, you will have to review and approve the workflow execution to allow the workflow to run and have permissions to the environment secrets and variables vital to the execution of the workflow. 
+> 3. If he trigger doesn't start the workflow, you can run the workflow manually by selecting it and click on "Run workflow":
+![Manual dispatch](../../assets/images/module4/workflow-run-manually.webp)
 
-
-
-
-
+16. Click on the executing workflow 
