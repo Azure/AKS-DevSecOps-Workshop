@@ -8,9 +8,18 @@ nav_order: 1
 
 Workload Identity allows pods to access Azure resources using Azure managed identities and removes the need to store any principal secrets.  For example, given a workload that may store files in Azure Storage,  when it needs to access those files, the pod authenticates itself against the resource as an Azure managed identity.
 
-Workload Identity for AKS integrates with the Kubernetes native capabilities to federate with any external identity providers.
+Workload Identity for AKS integrates with the Kubernetes native capabilities to federate with any external identity providers. The feature sunsets the existing AAD Pod-Managed Identity offering and makes it easier to use and deploy, and overcome several limitations in AAD Pod-Managed Identity.
 
-The feature sunsets the existing AAD Pod-Managed Identity offering and makes it easier to use and deploy, and overcome several limitations in AAD Pod-Managed Identity.
+This lab will perform the following work:
+- (PreReq) Enable OIDC Preview provider features & AZ CLI preview extension
+- Enable OIDC Issuer and Workload Identity features on the AKS cluster
+- Create a Managed Identity
+- Create a Service Account in Kubernetes
+- Create a Keyvault secret and grant the Managed Identity access to read secrets
+- Establish a federated trust between Kubernetes and AAD
+- Deploy a sample application and validate it can access the Keyvault secret using the Managed Identity
+
+The following is a sequence diagram for Workload Identity:
 
 ![Sequence Diagram](../../assets/images/module1/aks-workload-identity-model.png)
 
@@ -22,12 +31,12 @@ The feature sunsets the existing AAD Pod-Managed Identity offering and makes it 
 Set the following environment variables in your bash session by updating the values and executing in your terminal. Update the values in the <> brackets. The values for these can be pulled from your lab resource group:
 
 ```bash
-SUBSCRIPTION_ID=<SubscriptionID>
-KEYVAULT_NAME=<Keyvault found in RG>
 RG_NAME=rg-aks-gha
 LOCATION=eastus
 CLUSTER_NAME=devsecops-aks
 KEYVAULT_SECRET_NAME=mysecret
+SUBSCRIPTION_ID=$(az account show --query id -o tsv)
+KEYVAULT_NAME=$(az keyvault list -g ${RG_NAME} --query "[0].name" -o tsv)
 ```
 
 ### Register preview providers on your subscription
@@ -63,6 +72,7 @@ az aks update --resource-group $RG_NAME --name $CLUSTER_NAME --enable-oidc-issue
 ```bash
 export AKS_OIDC_ISSUER="$(az aks show -n $CLUSTER_NAME -g $RG_NAME --query "oidcIssuerProfile.issuerUrl" -otsv)"
 echo $AKS_OIDC_ISSUER
+echo "$AKS_OIDC_ISSUER/.well-known/openid-configuration"
 ```
 3. Verify that you now see a mutating webhook pod on your cluster:
 ```bash
@@ -79,13 +89,13 @@ az identity create --name "${USER_ASSIGNED_IDENTITY_NAME}" --resource-group "${R
 ```
 2. Create Access Policy against Keyvault, allowing the identity to get secrets.
 ```bash
-export USER_ASSIGNED_CLIENT_ID="$(az identity show --resource-group "${RG_NAME}" --name "${USER_ASSIGNED_IDENTITY_NAME}" --query 'clientId' -otsv)"
-az keyvault set-policy --name "${KEYVAULT_NAME}" --secret-permissions get --spn "${USER_ASSIGNED_CLIENT_ID}"
+export USER_ASSIGNED_CLIENT_ID="$(az identity show --resource-group "${RG_NAME}" --name "${USER_ASSIGNED_IDENTITY_NAME}" --query 'clientId' -o tsv)"
+az keyvault set-policy --name "${KEYVAULT_NAME}" --secret-permissions get --spn "${USER_ASSIGNED_CLIENT_ID}" --resource-group "${RG_NAME}"
 ```
 3. Create a Secret in Keyvault
 ```bash
 export USERID=$(az ad signed-in-user show --query id -o tsv)
-az keyvault set-policy --name "${KEYVAULT_NAME}" --secret-permissions list set get --object-id $USERID
+az keyvault set-policy --name "${KEYVAULT_NAME}" --secret-permissions list set get --object-id $USERID --resource-group "${RG_NAME}"
 az keyvault secret set --vault-name "${KEYVAULT_NAME}" \
        --name "${KEYVAULT_SECRET_NAME}" \
        --value "LevelUp Lab Secret\!"
@@ -112,7 +122,7 @@ metadata:
 EOF
 ```
 
-2. Establish Federated Identity. The namespace and service account name are used to create the subject identifier in the federation. Once this is setup, this application will now trust tokens coming from our Kubernetes cluster.
+2. Establish Federated Identity. The namespace and service account name are used to create the subject identifier in the federation. Once this is setup, this Managed Identity will now trust tokens coming from our Kubernetes cluster.
 ```bash
 az identity federated-credential create --name myfederatedIdentity --identity-name "${USER_ASSIGNED_IDENTITY_NAME}" --resource-group "${RG_NAME}" --issuer "${AKS_OIDC_ISSUER}" --subject system:serviceaccount:"${SERVICE_ACCOUNT_NAMESPACE}":"${SERVICE_ACCOUNT_NAME}"
 ```
@@ -123,7 +133,7 @@ After the federation is setup, navigate to your cluster resource group, and you 
 
 ### Deploy Sample workload & Test
 
-The following YAML deploys a sample .net application that writes to the log the content of the secret inside keyvault. The Go application expects two environment variables for the Kevault URL and the Keyvault secret name references. You can find source code for different programming languages that implement MSAL and KeyVault integration [here](https://github.com/Azure/azure-workload-identity/tree/main/examples).
+The following YAML deploys a sample .net application that writes to the log the content of the secret inside keyvault. The .NET application expects two environment variables for the Kevault URL and the Keyvault secret name references. You can find source code for different programming languages that implement MSAL and KeyVault integration [here](https://github.com/Azure/azure-workload-identity/tree/main/examples).
 
 Note the following required annotations on the K8S YAML configuration:
 
