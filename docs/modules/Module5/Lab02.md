@@ -1,6 +1,6 @@
 ---
 title: Lab 2 - Azure Policy
-parent: Module 5: Operate and Monitor AKS
+parent: Module 5 - Operate and Monitor AKS
 has_children: false
 nav_order: 2
 ---

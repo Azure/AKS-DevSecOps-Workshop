@@ -1,6 +1,6 @@
 ---
 title: Lab 1 - Container Insights
-parent: Module 5: Operate and Monitor AKS
+parent: Module 5 - Operate and Monitor AKS
 has_children: false
 nav_order: 1
 ---
