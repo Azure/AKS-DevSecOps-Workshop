@@ -27,20 +27,21 @@ You can configure environments with protection rules and secrets. When a workflo
 6. Specify your github handle/username in the list of "Required reviewers". This will set you as user that must review and approve workflow jobs that use this environment.
 7. Click Save protection rules.
 8. Add 3 enviroment secrets by following the next steps:
-    - Under Environment secrets, click "Add secret".
+    1. Under Environment secrets, click "Add secret".
         - Enter "TEST_AZURE_CLIENT_ID"
         - Enter the value of <i>$appId</i> retrieved from Module 0.
         - Click Add secret.
-        > Note: if you don't have this value saved or still present in your shell session, you can retrieve the appid specific of this lab by looking at your App Registrations in the Azure Portal (Azure Active Directory section) or by az command. The following command will retrieve a list of all your registered applications (list of displayName + appId).  
-```bash 
-az ad app list --show-mine --query "[].{displayName:displayName appId:appId createdDateTime:createdDateTime}" -o tsv
-```
-        > please identify in the list the app registration related to this lab (the one created in Module 0) by recognizing its displayName or its createdDateTime displayed in the output of the previous command.
-    - Under Environment secrets, click "Add secret" again.
+        > Note: <br>
+        >> if you don't have this value saved or still present in your shell session, you can retrieve the appid specific of this lab by looking at your App Registrations in the Azure Portal (Azure Active Directory section) or by executing the az ad app list command below which will retrieve a list of all your registered applications (list of displayName + appId).<br><br>
+        >> Please identify in the output the app registration related to this lab (the one created in Module 0) by recognizing its displayName or its createdDateTime displayed in the output of the previous command. The appId is the guid with a format similar to this: 00000000-0000-0000-0000-000000000000<br>
+`
+az ad app list --show-mine --query "[].{displayName:displayName appId:appId createdDateTime:createdDateTime}" -o tsv 
+`
+    2. Under Environment secrets, click "Add secret" again.
         - Enter "TEST_AZURE_TENANT_ID"
         - Enter the value of your tenant id.
         - Click Add secret.
-    - Under Environment secrets, click "Add secret" again.
+    3. Under Environment secrets, click "Add secret" again.
         - Enter "TEST_AZURE_SUBSCRIPTION_ID"
         - Enter the value of your subscription id.
         - Click Add secret.
