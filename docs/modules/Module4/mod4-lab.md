@@ -31,7 +31,11 @@ You can configure environments with protection rules and secrets. When a workflo
         - Enter "TEST_AZURE_CLIENT_ID"
         - Enter the value of <i>$appId</i> retrieved from Module 0.
         - Click Add secret.
-        > Note: if you don't have this value saved, you can always retrieve it from the ClientID property of the Managed Identity (default:"workshop-Identity") object deployed in your resource group.  
+        > Note: if you don't have this value saved or still present in your shell session, you can retrieve the appid specific of this lab by looking at your App Registrations in the Azure Portal (Azure Active Directory section) or by az command. The following command will retrieve a list of all your registered applications (list of displayName + appId).  
+```bash 
+az ad app list --show-mine --query "[].{displayName:displayName appId:appId createdDateTime:createdDateTime}" -o tsv
+```
+> please identify in the list the app registration related to this lab (the one created in Module 0) by recognizing its displayName or its createdDateTime displayed in the output of the previous command.
     - Under Environment secrets, click "Add secret" again.
         - Enter "TEST_AZURE_TENANT_ID"
         - Enter the value of your tenant id.
