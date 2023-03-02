@@ -83,7 +83,7 @@ appId=<appId from previous command>
 > the appId is a guid with a format similar to this: 00000000-0000-0000-0000-000000000000
 - in the same bash session, run the following command:
 ```bash
-az ad app federated-credential create --id $appId --parameters tools/deploy/module4/test-credential.json
+az ad app federated-credential create --id $appId --parameters tools/deploy/module4/mod4-credential.json
 ```
 12. Copy [mod4-lab1-deploy-test.yml](../../../tools/tools/deploy/module4/mod4-lab1-deploy-test.yml) to [github/workflow](../../../.github/workflows/) folder.
 13. Modify [text.txt](../../../tools/deploy/module4/text.txt) file and commit & push all changes to trigger the Actions workflow.
