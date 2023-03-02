@@ -49,18 +49,23 @@ az ad app list --show-mine --query "[].{displayName:displayName appId:appId crea
         The result should be similar to this:<br>
         ![Environment secrets](../../assets/images/module4/environment-secrets.webp)
 
-9. Add 5 environment variables to store the values needed by the workflow to execute its deployment to the test enviroment:
+9. Add 4 environment variables to store the values needed by the workflow to execute its deployment to the test enviroment:
     - Under Environment variables, click Add variable.
-        - Enter "TEST_AZURE_CONTAINER_REGISTRY"
-        - Enter the name of the Azure Container Registry deployed in your resource group(e.g.: devsecopsacr1        
+        - Enter "TEST_AZURE_CONTAINER_REGISTRY" (only text - no quotes)
+        - Enter the name of the Azure Container Registry deployed in your resource group(e.g.: devsecopsacr1)        
         - Click Add variable. 
     - Repeat the previous steps to add the following enviroment variables:
-        - TEST_CONTAINER_NAME: name of your acr repo (e.g.: testdevsecops) 
-        - TEST_RESOURCE_GROUP: name of your resource group
-        - TEST_CLUSTER_NAME: name of your aks cluster 
-        - TEST_DEPLOYMENT_MANIFEST_PATH: which is the path to the app manifest present in this lab. Therefore, please use   "tools/deploy/module4/devsecops-demo.yaml" (or whichever manifest you'd like to use) 
+        | YOUR_VARIABLE_NAME | Variable value |
+        | ------------------ | ----- |
+        | TEST_RESOURCE_GROUP | name of your resource group |
+        | TEST_CLUSTER_NAME | name of your aks cluster |
+        | TEST_DEPLOYMENT_MANIFEST_PATH | path to the app manifest. Unless different in your fork, the static value to copy as value in this lab is: "tools/deploy/module4/devsecops-demo.yaml" (only text - no quotes) | 
+    > To retrieve your TEST_AZURE_CONTAINER_REGISTRY, you can run:
+`
+az acr list -g <your-resource-group> --query [].name -o tsv
+`
 
-10. In [test-credential.json](../../../tools/deploy/module4/test-credential.json) file, replace `<your-github-username>` with your GitHub username (in your local repo).
+10. In [mod4-credential.json](../../../tools/deploy/module4/mod4-credential.json) file, replace `<your-github-username>` with your GitHub username (in your local repo).
 
    `"subject": "repo:<your-github-username>/AKS-DevSecOps-Workshop:environment:test",`
 
