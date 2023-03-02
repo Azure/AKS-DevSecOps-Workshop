@@ -28,7 +28,7 @@ You can configure environments with protection rules and secrets. When a workflo
 7. Click Save protection rules.
 8. Add 3 enviroment secrets by following the next steps:
     1. Under Environment secrets, click "Add secret".
-        - Enter "TEST_AZURE_CLIENT_ID"
+        - Enter "TEST_AZURE_CLIENT_ID" (only text - no quotes)
         - Enter the value of <i>$appId</i> retrieved from Module 0.
         - Click Add secret.
         > Note: <br>
@@ -38,11 +38,11 @@ You can configure environments with protection rules and secrets. When a workflo
 az ad app list --show-mine --query "[].{displayName:displayName appId:appId createdDateTime:createdDateTime}" -o tsv 
 `
     2. Under Environment secrets, click "Add secret" again.
-        - Enter "TEST_AZURE_TENANT_ID"
+        - Enter "TEST_AZURE_TENANT_ID" (only text - no quotes)
         - Enter the value of your tenant id.
         - Click Add secret.
     3. Under Environment secrets, click "Add secret" again.
-        - Enter "TEST_AZURE_SUBSCRIPTION_ID"
+        - Enter "TEST_AZURE_SUBSCRIPTION_ID" (only text - no quotes)
         - Enter the value of your subscription id.
         - Click Add secret.
 
