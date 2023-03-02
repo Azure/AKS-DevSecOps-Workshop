@@ -8,7 +8,6 @@ on:
 
 env:
   TEST_AZURE_CONTAINER_REGISTRY: ${{ vars.TEST_AZURE_CONTAINER_REGISTRY }}
-  TEST_CONTAINER_NAME: ${{ vars.TEST_CONTAINER_NAME }}
   TEST_RESOURCE_GROUP: ${{ vars.TEST_RESOURCE_GROUP }}
   TEST_CLUSTER_NAME: ${{ vars.TEST_CLUSTER_NAME }}
   TEST_DEPLOYMENT_MANIFEST_PATH: ${{ vars.TEST_DEPLOYMENT_MANIFEST_PATH }}
@@ -28,7 +27,6 @@ jobs:
       - name: Echo variables
         run: |
           echo "TEST_AZURE_CONTAINER_REGISTRY: ${{ env.TEST_AZURE_CONTAINER_REGISTRY }}"; 
-          echo "TEST_CONTAINER_NAME: ${{ env.TEST_CONTAINER_NAME }}"; 
           echo "TEST_RESOURCE_GROUP: ${{ env.TEST_RESOURCE_GROUP }}";
           echo "TEST_CLUSTER_NAME: ${{ env.TEST_CLUSTER_NAME }}";
           echo "TEST_DEPLOYMENT_MANIFEST_PATH: ${{ env.TEST_DEPLOYMENT_MANIFEST_PATH }}"
@@ -54,7 +52,7 @@ jobs:
       - name: Build and push image to ACR
         run: | 
           echo "You could build and push an image to ACR here by using the following commented commands"
-      ### az acr build --image "${{env.TEST_AZURE_CONTAINER_REGISTRY}}.azurecr.io/${{ env.TEST_CONTAINER_NAME }}:${{ github.sha }}" -r "${{ env.TEST_AZURE_CONTAINER_REGISTRY }}" -g ${{ env.TEST_RESOURCE_GROUP }} .
+      ### az acr build --image "${{env.TEST_AZURE_CONTAINER_REGISTRY}}.azurecr.io/<your-repo-name>:${{ github.sha }}" -r "${{ env.TEST_AZURE_CONTAINER_REGISTRY }}" -g ${{ env.TEST_RESOURCE_GROUP }} .
       - name: Checkout source code 
         uses: actions/checkout@v3
       # Use kubelogin to configure your kubeconfig for Azure auth
