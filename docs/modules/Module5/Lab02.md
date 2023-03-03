@@ -38,7 +38,7 @@ az aks enable-addons --resource-group $resourceGroupName --name $clusterName --a
 Then, verify that the add-on has been installed:
 
 ```bash
-az aks show --resource-group $resourceGroupName --name $clusterName--query addonProfiles.azurepolicy
+az aks show --resource-group $resourceGroupName --name $clusterName --query addonProfiles.azurepolicy
 ```
 
 The output should resemble the following:
