@@ -76,7 +76,7 @@ export AKS_OIDC_ISSUER="$(az aks show -n $CLUSTER_NAME -g $RG_NAME --query "oidc
 echo $AKS_OIDC_ISSUER
 echo "$AKS_OIDC_ISSUER/.well-known/openid-configuration"
 ```
-1. Verify that you now see a mutating webhook pod on your cluster. The mutating admission webhook is used to project a signed service account token to a workload’s volume and inject environment variables to pods with a service account.
+1. Verify that you now see a mutating webhook pod on your cluster. The mutating admission webhook is used to project a signed service account token to a workload’s volume and inject environment variables to pods.
 ```bash
 az aks get-credentials --resource-group $RG_NAME  --name $CLUSTER_NAME --admin --overwrite
 kubectl get pods -n kube-system | grep webhook
