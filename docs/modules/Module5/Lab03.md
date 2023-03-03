@@ -85,7 +85,9 @@ The above is a test command that is designed to trigger a test alert.  The follo
 No resources found in asc-alerttest-662jfi039n namespace.
 ```
 
-Next, return to the Azure Portal, navigate to the cluster and click on the Defender for Cloud menu option.
+Next, return to the Azure Portal.  Here, on the Defender for Cloud tab of our Cluster, we will check for a security alert that lines up with the above command.
+
+> Note: If your cluster is newly registered with Defender for Cloud, then it may take a substantial amount of time for this first alert to make it to the dashboard.  Please be patient.  If you would like, you can continue with the second set of pod-based Defender for Cloud Tests that appear after this visit to the Portal and then come back and check the status of your Cluster.
 
 <img alt="Defender for Cloud Menu" src="../../assets/images/module5/DefenderForCloudMenu.png" height="480px">
 
