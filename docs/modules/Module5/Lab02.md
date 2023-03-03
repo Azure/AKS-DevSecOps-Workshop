@@ -32,7 +32,7 @@ az provider register --namespace Microsoft.PolicyInsights
 Next, let's return to the AKS Cluster and install the add-on:
 
 ```bash
-az aks enable-addons --resource-group $resourceGroupName --name $clusterName--addons azure-policy
+az aks enable-addons --resource-group $resourceGroupName --name $clusterName --addons azure-policy
 ```
 
 Then, verify that the add-on has been installed:
