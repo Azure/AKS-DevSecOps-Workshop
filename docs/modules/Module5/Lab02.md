@@ -8,7 +8,7 @@ nav_order: 3
 # Module 5: Lab 2 - Azure Policy
 Here, in this lab, as part of [Module 5: Operate and Monitor](index.md), we will look at [Azure Policy for Kubernetes](https://learn.microsoft.com/en-us/azure/governance/policy/concepts/policy-for-kubernetes).
 
-Before attempting this lab, please be sure to complete the items described in the [Getting Started Section](index.md#getting-started).
+Before attempting this lab, please be sure to complete the items described in the [Getting Started Section](General.md#getting-started).
 
 ## Azure Policy for Kubernetes
 Azure Policy is a feature of the Azure Resource Management Platform which allows organizations to define and enforce stanards across their environments.  Azure Policy for Kubernetes is a Kubernetes add-on that works with Azure Policy.  The add-on extends extends [Gatekeeper](https://github.com/open-policy-agent/gatekeeper) v3, an _admission controller webhook_ for [Open Policy Agent](https://www.openpolicyagent.org/) (OPA).  Once installed, the add-on does the following:

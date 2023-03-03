@@ -8,7 +8,7 @@ nav_order: 4
 # Module 5: Lab 3 - Defender for Containers
 Here, in this lab, as part of [Module 5: Operate and Monitor](index.md), we will look at [Defender for Containers](https://learn.microsoft.com/en-us/azure/defender-for-cloud/defender-for-containers-introduction).
 
-Before attempting this lab, please be sure to complete the items described in our [Getting Started Section](index.md#getting-started).
+Before attempting this lab, please be sure to complete the items described in our [Getting Started Section](General.md#getting-started).
 
 ## Defender for Containers
 Defender for Containers is a cloud-native solution that may be used to secure your containers, helping you to improve, monitor, and maintain the security of your clusters, containers, and their applications.
