@@ -1,4 +1,11 @@
-# Module 5: Operate and Monitor AKS - Lab 3
+---
+title: Lab 3 - Defender for Containers
+parent: Module 5 - Operate and Monitor AKS
+has_children: false
+nav_order: 4
+---
+
+# Module 5: Lab 3 - Defender for Containers
 Here, in this lab, as part of [Module 5: Operate and Monitor](index.md), we will look at [Defender for Containers](https://learn.microsoft.com/en-us/azure/defender-for-cloud/defender-for-containers-introduction).
 
 Before attempting this lab, please be sure to complete the items described in our [Getting Started Section](index.md#getting-started).
@@ -62,7 +69,7 @@ The above should include:
 If, for some reason, the above components are not present on your cluster, you may install them by issuing the following command.  Then, return to the previous verification steps to make sure everything is in order.
 
 ```bash
-az aks update --resource-group $GROUP --name $CLUSTER --enable-defender
+az aks update --resource-group $resourceGroupName --name $clusterName --enable-defender
 ```
 
 ### Using Defender for Containers

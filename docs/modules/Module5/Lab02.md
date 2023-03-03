@@ -1,4 +1,11 @@
-# Module 5: Operate and Monitor AKS - Lab 2
+---
+title: Lab 2 - Azure Policy
+parent: Module 5 - Operate and Monitor AKS
+has_children: false
+nav_order: 3
+---
+
+# Module 5: Lab 2 - Azure Policy
 Here, in this lab, as part of [Module 5: Operate and Monitor](index.md), we will look at [Azure Policy for Kubernetes](https://learn.microsoft.com/en-us/azure/governance/policy/concepts/policy-for-kubernetes).
 
 Before attempting this lab, please be sure to complete the items described in the [Getting Started Section](index.md#getting-started).
@@ -25,13 +32,13 @@ az provider register --namespace Microsoft.PolicyInsights
 Next, let's return to the AKS Cluster and install the add-on:
 
 ```bash
-az aks enable-addons --resource-group $GROUP --name $CLUSTER --addons azure-policy
+az aks enable-addons --resource-group $resourceGroupName --name $clusterName--addons azure-policy
 ```
 
 Then, verify that the add-on has been installed:
 
 ```bash
-az aks show --resource-group $GROUP --name $CLUSTER --query addonProfiles.azurepolicy
+az aks show --resource-group $resourceGroupName --name $clusterName--query addonProfiles.azurepolicy
 ```
 
 The output should resemble the following:
@@ -52,7 +59,7 @@ Expand the Category filter and clear all the checked items except for Kubernetes
 
 ![Azure Policy Definition Filter](../../assets/images/module5/AzurePolicyDefinitionFilter.png)
 
-Azure Policy for Kubernetes provides some pre-defined iniatives.  Let's open and apply one to our infrastructure.  Find the "Kubernetes cluster pod security baseline standards for Linux-based workloads" and click it.
+Azure Policy for Kubernetes provides some pre-defined iniatives.  Let's open and apply one to our infrastructure.  Find the "Kubernetes cluster pod security baseline standards for Linux-based workloads" and click it.  It will help if you apply a filter where "CategoryType = Initiative."
 
 ![Azure Policy Initiative](../../assets/images/module5/AzurePolicyInitiative.png)
 
@@ -66,7 +73,7 @@ You will be preseted with the Portal's Assign Initiative wizard.  On the Basics 
 
 Then, on the Parameters tab, uncheck the `Only show parameters that need input or review` checkbox.  This will update the screen and you will be able to change the value of the `Effect` control.  Change `Effect` from `Audit` to `deny`.
 
-Then, click `Review + create` followed by `Create`.  This will apply the Initiative, however, it may take up to twenty minutes for the changes to be reflected on your Cluster.
+Then, click `Review + create` followed by `Create`.  This will apply the Initiative, however, it may take up to thirty minutes for the changes to be reflected on your Cluster.  
 
 Once the Initiative is in place, you can test it out by doing the following:
 
@@ -96,7 +103,7 @@ kubectl delete namespace azurepolicytest
 kubectl config set-context --current --namespace default
 ```
 
-### Update Bicep Templates
+### Update Bicep Templates (Optional)
 Now that we have enabled Azure Policy for Kubernetes, let's go back and update our Bicep tempaltes in order to make sure our deployment process picks up the changes.
 
 Add the following to your Bicep template:

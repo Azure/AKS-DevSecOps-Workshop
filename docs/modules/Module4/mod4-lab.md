@@ -1,3 +1,9 @@
+---
+title: Deploy Lab
+parent: Module 4 - Deploy Phase
+has_children: false
+nav_order: 1
+---
 # Module 4: Deploy - Lab
 AKS (Azure Kubernetes Service) DevSecOps Deployment refers to the process of deploying containerized applications on AKS while ensuring security and collaboration between development, security, and operations teams.
 
@@ -21,52 +27,82 @@ You can configure environments with protection rules and secrets. When a workflo
 6. Specify your github handle/username in the list of "Required reviewers". This will set you as user that must review and approve workflow jobs that use this environment.
 7. Click Save protection rules.
 8. Add 3 enviroment secrets by following the next steps:
-    - Under Environment secrets, click "Add secret".
-        - Enter "TEST_AZURE_CLIENT_ID"
+    1. Under Environment secrets, click "Add secret".
+        - Enter "TEST_AZURE_CLIENT_ID" (only text - no quotes)
         - Enter the value of <i>$appId</i> retrieved from Module 0.
         - Click Add secret.
-        > Note: if you don't have this value saved, you can always retrieve it from the ClientID property of the Managed Identity (default:"workshop-Identity") object deployed in your resource group.  
-    - Under Environment secrets, click "Add secret" again.
-        - Enter "TEST_AZURE_TENANT_ID"
+        > Note: <br>
+        >> if you don't have this value saved or still present in your shell session, you can retrieve the appid specific of this lab by looking at your App Registrations in the Azure Portal (Azure Active Directory section) or by executing the az ad app list command below which will retrieve a list of all your registered applications (list of displayName + appId).<br><br>
+        >> Please identify in the output the app registration related to this lab (the one created in Module 0) by recognizing its displayName or its createdDateTime displayed in the output of the previous command. The appId is the guid with a format similar to this: 00000000-0000-0000-0000-000000000000<br>
+`
+az ad app list --show-mine --query "[].{displayName:displayName appId:appId createdDateTime:createdDateTime}" -o tsv 
+`
+    2. Under Environment secrets, click "Add secret" again.
+        - Enter "TEST_AZURE_TENANT_ID" (only text - no quotes)
         - Enter the value of your tenant id.
         - Click Add secret.
-    - Under Environment secrets, click "Add secret" again.
-        - Enter "TEST_AZURE_SUBSCRIPTION_ID"
+    3. Under Environment secrets, click "Add secret" again.
+        - Enter "TEST_AZURE_SUBSCRIPTION_ID" (only text - no quotes)
         - Enter the value of your subscription id.
         - Click Add secret.
 
         The result should be similar to this:<br>
         ![Environment secrets](../../assets/images/module4/environment-secrets.webp)
 
-9. Add 5 environment variables to store the values needed by the workflow to execute its deployment to the test enviroment:
+9. Add 4 environment variables to store the values needed by the workflow to execute its deployment to the test enviroment:
     - Under Environment variables, click Add variable.
-        - Enter "TEST_AZURE_CONTAINER_REGISTRY"
-        - Enter the name of the Azure Container Registry deployed in your resource group(e.g.: devsecopsacr1        
+        - Enter "TEST_AZURE_CONTAINER_REGISTRY" (only text - no quotes)
+        - Enter the name of the Azure Container Registry deployed in your resource group(e.g.: devsecopsacr1)        
         - Click Add variable. 
     - Repeat the previous steps to add the following enviroment variables:
-        - TEST_CONTAINER_NAME: name of your acr repo (e.g.: testdevsecops) 
-        - TEST_RESOURCE_GROUP: name of your resource group
-        - TEST_CLUSTER_NAME: name of your aks cluster 
-        - TEST_DEPLOYMENT_MANIFEST_PATH: which is the path to the app manifest present in this lab. Therefore, please use   "../../tools/deploy/module4/devsecops-demo.yaml" (or whichever manifest you'd like to use) 
+        | YOUR_VARIABLE_NAME | Variable value |
+        | ------------------ | ----- |
+        | TEST_RESOURCE_GROUP | name of your resource group |
+        | TEST_CLUSTER_NAME | name of your aks cluster |
+        | TEST_DEPLOYMENT_MANIFEST_PATH | path to the app manifest. Unless different in your fork, the static value to copy as value in this lab is: "tools/deploy/module4/devsecops-demo.yaml" (only text - no quotes) | 
+    > To retrieve your TEST_AZURE_CONTAINER_REGISTRY, you can run:
+`
+az acr list -g <your-resource-group> --query [].name -o tsv
+`
 
+10. In [mod4-credential.json](../../../tools/deploy/module4/mod4-credential.json) file, replace `<your-github-username>` with your GitHub username (in your local repo).
 
-## Managing a branch protection rule
-In GitHub, you can create a [branch protection rule](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/defining-the-mergeability-of-pull-requests/managing-a-branch-protection-rule) to enforce certain workflows for one or more branches, such as requiring an approving review or passing status checks for all pull requests merged into the protected branch.
+   `"subject": "repo:<your-github-username>/AKS-DevSecOps-Workshop:environment:test",`
 
-> There is a large number of rules you can set up in the Branch settings. In this exercise, we are going to focus on a limited set due to timelines and intentional simplicity of the lab but we encourage you to explore all the options present in the settings.  
+   >If you have named your new repository something other than `AKS-DevSecOps-Workshop`, you will need to replace `AKS-DevSecOps-Workshop` above with the name of your repository. Also, if your deployment branch is not `main`, you will need to replace `main` with the name of your deployment branch.
 
-### Lab 2 - Creating a branch protection rule
-1. On GitHub.com, navigate to the main page of your repository.
-2. Under your repository name, click Settings. If you cannot see the "Settings" tab, select the  dropdown menu, then click Settings. <br>
-![Settings](../../assets/images/module4/repo-actions-settings.webp "Settings")
-3. In the "Code and automation" section of the sidebar, click "Branches".
-4. Next to "Branch protection rules", click Add rule.
-5. Under "Branch name pattern", you can type the branch name or pattern you want to protect. For this lab, we will type "*" (pattern for <i>any</i> branch) in the textbox in order to apply this set of rules to any branch in your repository. 
-![Branch name pattern](../../assets/images/module4/branch-name-pattern.webp "Branch name pattern") 
-6. Under "Protect matching branches", select Require a pull request before merging.<br>
-![Require pull request](../../assets/images/module4/PR-reviews-required-updated.webp "Require pull request")
-
-
-
-
-
+11. Setup additional federated identity credentials specifically for the test enviroment by:
+- retrieving the appId created in module 0. <br>If not saved in your session, you can retrieve the appid specific of this lab by looking at your App Registrations in the Azure Portal (Azure Active Directory section) or by az command. The following command will retrieve a list of all your registered applications (list of displayName + appId).  
+```bash 
+az ad app list --show-mine --query "[].{displayName:displayName appId:appId createdDateTime:createdDateTime}" -o tsv
+```
+> please identify in the list the app registration related to this lab (the one created in Module 0) by recognizing its displayName or its createdDateTime displayed in the output of the previous command. Then use the appId (guid only) to run the following command: 
+```
+appId=<appId from previous command>
+```
+> the appId is a guid with a format similar to this: 00000000-0000-0000-0000-000000000000
+- in the same bash session, run the following command:
+```bash
+az ad app federated-credential create --id $appId --parameters tools/deploy/module4/mod4-credential.json
+```
+12. Copy [mod4-lab1-deploy-test.yml](../../../tools/tools/deploy/module4/mod4-lab1-deploy-test.yml) to [github/workflow](../../../.github/workflows/) folder.
+13. Modify [text.txt](../../../tools/deploy/module4/text.txt) file and commit & push all changes to trigger the Actions workflow.
+> The workflow is pre-configured to be triggered when any change is pushed to that specific pattern. 
+14. Please monitor the execution of the workflow by navigating to "Actions":
+![Actions](../../assets/images/module4/actions-workflow-execution.webp)
+15. Click on the workflow currently executing:
+![Actions](../../assets/images/module4/worflow-run-executing.webp)
+> Note:
+> 1. The label of the workflow run depends on the Commit message you provided when pushing the changes. 
+> 2. You may notice the status Waiting. This depends on the Environment rule we set in step 6. In fact, you will have to review and approve the workflow execution to allow the workflow to run and have permissions to the environment secrets and variables vital to the execution of the workflow. 
+> 3. If he trigger doesn't start the workflow, you can run the workflow manually by selecting the workflow and click on "Run workflow".
+16. Once you click on the executing workflow, you should see your running instance waiting for your Review:
+![Manual dispatch](../../assets/images/module4/workflow-waiting-review.webp)
+17. Click on "Review deployments", confirm the checkbox in the popup and "Approve and deploy":
+![Review deployments](../../assets/images/module4/review-deployment-confirm-popup.webp)
+18. Once the workflow is completed, you can verify the deployment of the pod by executing the following command from the shell:
+```bash
+kubectl get pod devsecops-mod4-test-pod 
+```
+The output should be similar to:
+![Pod verify](../../assets/images/module4/kubectl-pod-verify-result.webp)

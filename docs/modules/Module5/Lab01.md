@@ -1,4 +1,11 @@
-# Module 5: Operate and Monitor AKS - Lab 1
+---
+title: Lab 1 - Container Insights
+parent: Module 5 - Operate and Monitor AKS
+has_children: false
+nav_order: 2
+---
+
+# Module 5: Lab 1 - Container Insights
 Here, in this lab, as part of [Module 5: Operate and Monitor](index.md), we will look at [Container Insights](https://learn.microsoft.com/en-us/azure/azure-monitor/containers/container-insights-overview).
 
 Before attempting this lab, please be sure to complete the items described in the [Getting Started Section](index.md#getting-started).
@@ -12,14 +19,14 @@ Container Insights is designed to store its data in a [Log Analytics workspace](
 Here, let's begin by creating a Log Analytics workspace in order to support Container Insights.  Right now, we will do this using the Azure CLI.  Later, we will augment our Bicep templates in order to perform this same work.
 
 ```bash
-az monitor log-analytics workspace create --resource-group $GROUP --workspace-name $WORKSPACE
-WORKSPACEID=$(az monitor log-analytics workspace show --resource-group $GROUP --workspace-name $WORKSPACE --query id -o tsv)
+az monitor log-analytics workspace create --resource-group $resourceGroupName --workspace-name $workspaceName
+WORKSPACEID=$(az monitor log-analytics workspace show --resource-group $resourceGroupName --workspace-name $workspaceName --query id -o tsv)
 ```
 
 Now, let's augment our cluster and enable Container Insights.
 
 ```bash
-az aks enable-addons -a monitoring --resource-group $GROUP --name $CLUSTER --workspace-resource-id $WORKSPACEID
+az aks enable-addons -a monitoring --resource-group $resourceGroupName --name $clusterName --workspace-resource-id $WORKSPACEID
 ```
 
 Let's verify that the Container Insights agent and solution were successfully deployed.  First, we'll verify the daemonset was deployed:
@@ -88,6 +95,8 @@ Next, change the view by clicking on the Nodes tab.  Here, you will see a summar
 
 ![Container Insights Nodes Tab](../../assets//images/module5/ContainerInsightsClusterNodes.png)
 
+> Note: it may take several minutes in order for the visualization to update and show the increased utilization of your cluster. 
+
 Find the node that appears to be the most busy in your cluster and expand its line item.  Here, you will see a list of the processes running on that node.  You should see our test-shell pod running stress at the top of this list.
 
 ![Container Insights Node Details](../../assets/images/module5/ContainerInsightsClusterNodesProcesses.png)
@@ -117,13 +126,15 @@ kubectl delete namespace containerinsightstest
 kubectl config set-context --current --namespace default
 ```
 
-### Additional Diagnostics 
+### Additional Diagnostics (Optional)
 Container Insights provides excellent visibility within our Kubernetes Clusters.  However, we can get even more visibility by streaming diagnostics data into the Azure Log Analytics workspace we just created.  AKS offers you the ability to stream many types of diagnostic data, including log data from various sources as well as performance metrics.
+
+> Note: If you choose to implement Azure Sentinel as your centralized security monitoring solution, then this step will be done for you automatically when you add the Azure Kubernetes Service Data Connector to Sentinel.  Sentinel will connect its associated Log Analytics Workspace to your cluster's diagnostics.
 
 Use the following CLI command to turn begin streaming select diagnostics data into Log Analytics
 
 ```bash
-CLUSTERID=$(az aks show --resource-group $GROUP --name $CLUSTER --query id -o tsv)
+CLUSTERID=$(az aks show --resource-group $resourceGroupName --name $clusterName --query id -o tsv)
 echo '['>diag.config
 echo '{"category": "cluster-autoscaler", "enabled": true},'>>diag.config
 echo '{"category": "guard", "enabled" :true},'>>diag.config
@@ -143,7 +154,7 @@ az monitor diagnostic-settings create \
 rm diag.config
 ```
 
-### Update Bicep Templates
+### Update Bicep Templates (Optional)
 Now that we have enabled Container Insights, let's go back and update our Bicep tempaltes in order to make sure our deployment process picks up the changes.
 
 First, add the Log Analytics workspace to the template:
