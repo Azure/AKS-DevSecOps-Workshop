@@ -59,7 +59,7 @@ Expand the Category filter and clear all the checked items except for Kubernetes
 
 ![Azure Policy Definition Filter](../../assets/images/module5/AzurePolicyDefinitionFilter.png)
 
-Azure Policy for Kubernetes provides some pre-defined iniatives.  Let's open and apply one to our infrastructure.  Find the "Kubernetes cluster pod security baseline standards for Linux-based workloads" and click it.  It will help if you apply a filter where "CategoryType = Initiative."
+Azure Policy for Kubernetes provides some pre-defined iniatives.  Let's open and apply one to our infrastructure.  Find the "Kubernetes cluster pod security baseline standards for Linux-based workloads" and click it.  It will help if you apply a filter where "Definition Type = Initiative."
 
 ![Azure Policy Initiative](../../assets/images/module5/AzurePolicyInitiative.png)
 
