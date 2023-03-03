@@ -8,7 +8,7 @@ nav_order: 3
 # Module 5: Lab 2 - Azure Policy
 Here, in this lab, as part of [Module 5: Operate and Monitor](index.md), we will look at [Azure Policy for Kubernetes](https://learn.microsoft.com/en-us/azure/governance/policy/concepts/policy-for-kubernetes).
 
-Before attempting this lab, please be sure to complete the items described in the [Getting Started Section](index.md#getting-started).
+Before attempting this lab, please be sure to complete the items described in the [Getting Started Section](General.md#getting-started).
 
 ## Azure Policy for Kubernetes
 Azure Policy is a feature of the Azure Resource Management Platform which allows organizations to define and enforce stanards across their environments.  Azure Policy for Kubernetes is a Kubernetes add-on that works with Azure Policy.  The add-on extends extends [Gatekeeper](https://github.com/open-policy-agent/gatekeeper) v3, an _admission controller webhook_ for [Open Policy Agent](https://www.openpolicyagent.org/) (OPA).  Once installed, the add-on does the following:
@@ -32,13 +32,13 @@ az provider register --namespace Microsoft.PolicyInsights
 Next, let's return to the AKS Cluster and install the add-on:
 
 ```bash
-az aks enable-addons --resource-group $resourceGroupName --name $clusterName--addons azure-policy
+az aks enable-addons --resource-group $resourceGroupName --name $clusterName --addons azure-policy
 ```
 
 Then, verify that the add-on has been installed:
 
 ```bash
-az aks show --resource-group $resourceGroupName --name $clusterName--query addonProfiles.azurepolicy
+az aks show --resource-group $resourceGroupName --name $clusterName --query addonProfiles.azurepolicy
 ```
 
 The output should resemble the following:
@@ -59,7 +59,7 @@ Expand the Category filter and clear all the checked items except for Kubernetes
 
 ![Azure Policy Definition Filter](../../assets/images/module5/AzurePolicyDefinitionFilter.png)
 
-Azure Policy for Kubernetes provides some pre-defined iniatives.  Let's open and apply one to our infrastructure.  Find the "Kubernetes cluster pod security baseline standards for Linux-based workloads" and click it.  It will help if you apply a filter where "CategoryType = Initiative."
+Azure Policy for Kubernetes provides some pre-defined iniatives.  Let's open and apply one to our infrastructure.  Find the "Kubernetes cluster pod security baseline standards for Linux-based workloads" and click it.  It will help if you apply a filter where "Definition Type = Initiative."
 
 ![Azure Policy Initiative](../../assets/images/module5/AzurePolicyInitiative.png)
 
@@ -73,7 +73,9 @@ You will be preseted with the Portal's Assign Initiative wizard.  On the Basics 
 
 Then, on the Parameters tab, uncheck the `Only show parameters that need input or review` checkbox.  This will update the screen and you will be able to change the value of the `Effect` control.  Change `Effect` from `Audit` to `deny`.
 
-Then, click `Review + create` followed by `Create`.  This will apply the Initiative, however, it may take up to thirty minutes for the changes to be reflected on your Cluster.  
+Then, click `Review + create` followed by `Create`.  This will apply the Initiative.
+
+> Note: It can take a substantial amount of time for the results of Azure Policy to be applied to your cluster - perhaps as long as thirty minutes.  If you would like, you may pause at this point, continue on with Lab 3 and return later.
 
 Once the Initiative is in place, you can test it out by doing the following:
 

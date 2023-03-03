@@ -8,7 +8,7 @@ nav_order: 2
 # Module 5: Lab 1 - Container Insights
 Here, in this lab, as part of [Module 5: Operate and Monitor](index.md), we will look at [Container Insights](https://learn.microsoft.com/en-us/azure/azure-monitor/containers/container-insights-overview).
 
-Before attempting this lab, please be sure to complete the items described in the [Getting Started Section](index.md#getting-started).
+Before attempting this lab, please be sure to complete the items described in the [Getting Started Section](General.md#getting-started).
 
 ## Container Insights
 Container Insights is a feature designed to monitor the performance of container workloads deployed to the cloud. It gives you performance visibility by collecting memory and processor metrics from controllers, nodes, and containers that are available in Kubernetes through the Metrics API. After you enable monitoring from Kubernetes clusters, metrics and Container logs are automatically collected for you through a containerized version of the Log Analytics agent for Linux. Metrics are sent to the [metrics database in Azure Monitor](https://learn.microsoft.com/en-us/azure/azure-monitor/essentials/data-platform-metrics). Log data is sent to your [Log Analytics workspace](https://learn.microsoft.com/en-us/azure/azure-monitor/logs/log-analytics-workspace-overview).
@@ -89,13 +89,13 @@ stress -c 10
 
 The above commands will generate a sustained CPU spike in the cluster.  Return to Container Insights and view the Cluster tab.  Turn on Live updates and you should see the Node CPU Utilization graph jump as a result of the stress command.
 
+> Note: it may take several minutes in order for the visualization to update and show the increased utilization of your cluster. 
+
 <img alt="Container Insights Dashboard" src="../../assets/images/module5/ContainerInsightsClusterNodeCPU.png" height="200px">
 
 Next, change the view by clicking on the Nodes tab.  Here, you will see a summary of what's happening inside the cluster.  Notice that one of your nodes (The one running stress) should be much more busy than the others.
 
 ![Container Insights Nodes Tab](../../assets//images/module5/ContainerInsightsClusterNodes.png)
-
-> Note: it may take several minutes in order for the visualization to update and show the increased utilization of your cluster. 
 
 Find the node that appears to be the most busy in your cluster and expand its line item.  Here, you will see a list of the processes running on that node.  You should see our test-shell pod running stress at the top of this list.
 
