@@ -6,29 +6,29 @@ nav_order: 1
 ---
 # Module 1 - Workload Identity
 
-Workload Identity allows pods to access Azure resources using Azure managed identities and removes the need to store any principal secrets.  For example, given a workload that may store files in Azure Storage,  when it needs to access those files, the pod authenticates itself against the resource as an Azure managed identity.
+Workload Identity allows pods to access Azure resources using Azure managed identities and removes the need to store any credential secrets.  For example, given a workload that may store files in Azure Storage,  when it needs to access those files, the pod authenticates itself against the resource as an Azure managed identity.
 
-Workload Identity for AKS integrates with the Kubernetes native capabilities to federate with any external identity providers. The feature sunsets the existing AAD Pod-Managed Identity offering and makes it easier to use and deploy, and overcome several limitations in AAD Pod-Managed Identity.
+AAD Workload Identity for AKS integrates with the Kubernetes native capabilities to federate with any external identity providers. The feature sunsets the existing AAD Pod-Managed Identity offering and makes it easier to use and deploy, and overcome several limitations in AAD Pod-Managed Identity.
 
 This lab will perform the following work:
-- (PreReq) Enable OIDC Preview provider features & AZ CLI preview extension
+- Enable Workload Identity Preview provider features on Subscription & AZ CLI preview extension
 - Enable OIDC Issuer and Workload Identity features on the AKS cluster
-- Create a Managed Identity
+- Create a Managed Identity in Azure
 - Create a Service Account in Kubernetes
 - Create a Keyvault secret and grant the Managed Identity access to read secrets
-- Establish a federated trust between Kubernetes and AAD
+- Establish a Federated Trust between Kubernetes and AAD
 - Deploy a sample application and validate it can access the Keyvault secret using the Managed Identity
 
-The following is a sequence diagram for Workload Identity:
+The following is a diagram for this lab module:
 
-![Sequence Diagram](../../assets/images/module1/aks-workload-identity-model.png)
+![Solution](../../assets/images/module1/diagram.png)
 
 ## Enabling Workload Identity
 
 > **Note**
 > As of Feb. 2023, this feature is in public preview, with expectations that GA is soon, so the following 'Register preview providers' section will not be required once the feature is GA.
 
-Set the following environment variables in your bash session by updating the values and executing in your terminal. Update the values in the <> brackets. The values for these can be pulled from your lab resource group:
+Set the following environment variables in your bash session by updating the values and executing in your terminal.
 
 ```bash
 RG_NAME=rg-aks-gha
@@ -68,15 +68,17 @@ az extension update --name aks-preview
 ```bash
 az aks update --resource-group $RG_NAME --name $CLUSTER_NAME --enable-oidc-issuer --enable-workload-identity
 ```
+- The OIDC Issuer feature allows Azure Active Directory (Azure AD) or other cloud provider identity and access management platforms, to discover the API server's public signing keys.
+- The Azure AD Workload Identity feature for Kubernetes integrates with the capabilities native to Kubernetes to federate with external identity providers. It allows for workloads in your AKS cluster to make use of AAD Managed Identities.
 2. Set the ODIC Issuer URL to a variable for usage later. 
 ```bash
 export AKS_OIDC_ISSUER="$(az aks show -n $CLUSTER_NAME -g $RG_NAME --query "oidcIssuerProfile.issuerUrl" -otsv)"
 echo $AKS_OIDC_ISSUER
 echo "$AKS_OIDC_ISSUER/.well-known/openid-configuration"
 ```
-3. Verify that you now see a mutating webhook pod on your cluster:
+1. Verify that you now see a mutating webhook pod on your cluster. The mutating admission webhook is used to project a signed service account token to a workload’s volume and inject environment variables to pods with a service account.
 ```bash
-az aks get-credentials --resource-group $RG_NAME  --name $CLUSTER_NAME --admin
+az aks get-credentials --resource-group $RG_NAME  --name $CLUSTER_NAME --admin --overwrite
 kubectl get pods -n kube-system | grep webhook
 ```
 
@@ -122,7 +124,7 @@ metadata:
 EOF
 ```
 
-2. Establish Federated Identity. The namespace and service account name are used to create the subject identifier in the federation. Once this is setup, this Managed Identity will now trust tokens coming from our Kubernetes cluster.
+2. Establish Federated Identity. The namespace and service account name are used to create the subject identifier in the federation. Once this is setup, this Managed Identity will now trust tokens coming from our Kubernetes cluster. The subject claim identifies the principal that will be the subject of the token.
 ```bash
 az identity federated-credential create --name myfederatedIdentity --identity-name "${USER_ASSIGNED_IDENTITY_NAME}" --resource-group "${RG_NAME}" --issuer "${AKS_OIDC_ISSUER}" --subject system:serviceaccount:"${SERVICE_ACCOUNT_NAMESPACE}":"${SERVICE_ACCOUNT_NAME}"
 ```
