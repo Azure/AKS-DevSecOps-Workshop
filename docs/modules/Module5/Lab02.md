@@ -73,7 +73,9 @@ You will be preseted with the Portal's Assign Initiative wizard.  On the Basics 
 
 Then, on the Parameters tab, uncheck the `Only show parameters that need input or review` checkbox.  This will update the screen and you will be able to change the value of the `Effect` control.  Change `Effect` from `Audit` to `deny`.
 
-Then, click `Review + create` followed by `Create`.  This will apply the Initiative, however, it may take up to thirty minutes for the changes to be reflected on your Cluster.  
+Then, click `Review + create` followed by `Create`.  This will apply the Initiative.
+
+> Note: It can take a substantial amount of time for the results of Azure Policy to be applied to your cluster - perhaps as long as thirty minutes.  If you would like, you may pause at this point, continue on with Lab 3 and return later.
 
 Once the Initiative is in place, you can test it out by doing the following:
 
