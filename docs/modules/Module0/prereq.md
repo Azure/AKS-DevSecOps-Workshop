@@ -32,7 +32,7 @@ This will require performing the following tasks:
 
 ### Forking this repository into your GitHub account
 
-* Fork this repository into your GitHub account by clicking on the "Fork" button at the top right of this page.
+* Fork this [repository](https://github.com/Azure/AKS-DevSecOps-Workshop) into your GitHub account by clicking on the "Fork" button at the top right of its page.
 * Clone your newly forked repository to your local machine.
 
 
