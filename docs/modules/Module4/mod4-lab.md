@@ -45,8 +45,7 @@ az ad app list --show-mine --query "[].{displayName:displayName appId:appId crea
         - Enter "TEST_AZURE_SUBSCRIPTION_ID" (only text - no quotes)
         - Enter the value of your subscription id.
         - Click Add secret.
-
-        The result should be similar to this:<br>
+        > The result should be similar to this:<br>
         ![Environment secrets](../../assets/images/module4/environment-secrets.webp)
 
 9. Add 4 environment variables to store the values needed by the workflow to execute its deployment to the test enviroment:
