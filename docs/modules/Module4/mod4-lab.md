@@ -60,7 +60,7 @@ az ad app list --show-mine --query "[].{displayName:displayName appId:appId crea
         | TEST_CLUSTER_NAME | name of your aks cluster |
         | TEST_DEPLOYMENT_MANIFEST_PATH | path to the app manifest. <br><i>Unless different in your fork, the static value to copy as value in this lab is: "tools/deploy/module4/deployment-manifest-test-sample.yaml" (only text - no quotes) </i> |
         
-> In case you need to retrieve your TEST_AZURE_CONTAINER_REGISTRY and TEST_CLUSTER_NAME, you can run:
+> You can retrieve your TEST_AZURE_CONTAINER_REGISTRY and TEST_CLUSTER_NAME from the portal or by running:
 ```bash
 az acr list -g <your-resource-group> --query [].name -o tsv
 az aks list -g <your-resource-group> --query [].name -o tsv
