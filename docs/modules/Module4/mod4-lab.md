@@ -53,7 +53,7 @@ az ad app list --show-mine --query "[].{displayName:displayName appId:appId crea
         - Enter "TEST_AZURE_CONTAINER_REGISTRY" (only text - no quotes)
         - Enter the name of the Azure Container Registry deployed in your resource group(e.g.: devsecopsacr1)        
         - Click Add variable. 
-    - Repeat the previous steps to add the following enviroment variables: 
+    - Repeat the previous steps to add the following enviroment variables:<br>
         <table> 
         <tr><th>YOUR_VARIABLE_NAME </th><th> Variable value </th></tr>
         <tr><td>TEST_RESOURCE_GROUP</td><td> name of your resource group </td></tr>
