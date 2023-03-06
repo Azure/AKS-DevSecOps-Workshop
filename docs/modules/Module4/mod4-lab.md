@@ -53,18 +53,18 @@ az ad app list --show-mine --query "[].{displayName:displayName appId:appId crea
         - Enter "TEST_AZURE_CONTAINER_REGISTRY" (only text - no quotes)
         - Enter the name of the Azure Container Registry deployed in your resource group(e.g.: devsecopsacr1)        
         - Click Add variable. 
-    - Repeat the previous steps to add the following enviroment variables: <br>
-        | YOUR_VARIABLE_NAME | Variable value |
-        | ------------------ | ----- |
-        | TEST_RESOURCE_GROUP | name of your resource group |
-        | TEST_CLUSTER_NAME | name of your aks cluster |
-        | TEST_DEPLOYMENT_MANIFEST_PATH | path to the app manifest. Unless different in your fork, the static value to copy as value in this lab is: "tools/deploy/module4/deployment-manifest-test-sample.yaml" (only text - no quotes) | 
+    - Repeat the previous steps to add the following enviroment variables: <br><br>
+        |YOUR_VARIABLE_NAME|Variable value|
+        |------------------|------------------|
+        |TEST_RESOURCE_GROUP|name of your resource group|
+        |TEST_CLUSTER_NAME|name of your aks cluster|
+        |TEST_DEPLOYMENT_MANIFEST_PATH|path to the app manifest. Unless different in your fork, the static value to copy as value in this lab is: "tools/deploy/module4/deployment-manifest-test-sample.yaml" (only text - no quotes)|
         
-        
-> To retrieve your TEST_AZURE_CONTAINER_REGISTRY, you can run:
-`
+> In case you need to retrieve your TEST_AZURE_CONTAINER_REGISTRY and TEST_CLUSTER_NAME, you can run:
+```bash
 az acr list -g <your-resource-group> --query [].name -o tsv
-`
+az aks list -g <your-resource-group> --query [].name -o tsv
+```
 
 10. In [mod4-credential.json](../../../tools/deploy/module4/mod4-credential.json) file, replace `<your-github-username>` with your GitHub username (in your local repo).
 
