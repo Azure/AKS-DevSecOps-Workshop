@@ -44,7 +44,8 @@ az ad app list --show-mine --query "[].{displayName:displayName appId:appId crea
     3. Under Environment secrets, click "Add secret" again.
         - Enter "TEST_AZURE_SUBSCRIPTION_ID" (only text - no quotes)
         - Enter the value of your subscription id.
-        - Click Add secret.
+        - Click Add secret. 
+        <br><br>
         > The result should be similar to this:<br>
         ![Environment secrets](../../assets/images/module4/environment-secrets.webp)
 
@@ -53,13 +54,15 @@ az ad app list --show-mine --query "[].{displayName:displayName appId:appId crea
         - Enter "TEST_AZURE_CONTAINER_REGISTRY" (only text - no quotes)
         - Enter the name of the Azure Container Registry deployed in your resource group(e.g.: devsecopsacr1)        
         - Click Add variable. 
-    - Repeat the previous steps to add the following enviroment variables:<br>
+    - Repeat the previous steps to add the following enviroment variables: <br>
         | YOUR_VARIABLE_NAME | Variable value |
         | ------------------ | ----- |
         | TEST_RESOURCE_GROUP | name of your resource group |
         | TEST_CLUSTER_NAME | name of your aks cluster |
-        | TEST_DEPLOYMENT_MANIFEST_PATH | path to the app manifest. Unless different in your fork, the static value to copy as value in this lab is: "tools/deploy/module4/devsecops-demo.yaml" (only text - no quotes) | 
-    > To retrieve your TEST_AZURE_CONTAINER_REGISTRY, you can run:
+        | TEST_DEPLOYMENT_MANIFEST_PATH | path to the app manifest. Unless different in your fork, the static value to copy as value in this lab is: "tools/deploy/module4/deployment-manifest-test-sample.yaml" (only text - no quotes) | 
+        
+        
+> To retrieve your TEST_AZURE_CONTAINER_REGISTRY, you can run:
 `
 az acr list -g <your-resource-group> --query [].name -o tsv
 `
