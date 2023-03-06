@@ -74,31 +74,35 @@ az ad app list --show-mine --query "[].{displayName:displayName appId:appId crea
    > If you have named your new repository something other than `AKS-DevSecOps-Workshop`, you will need to replace `AKS-DevSecOps-Workshop` above with the name of your repository. 
    > Also, if your deployment branch is not `main`, you will need to replace `main` with the name of your deployment branch.
 
-11. Setup additional federated identity credentials specifically for the test enviroment by:
-- retrieving the appId created in module 0. <br>If not saved in your session, you can retrieve the appid specific of this lab by looking at your App Registrations in the Azure Portal (Azure Active Directory section) or by az command. The following command will retrieve a list of all your registered applications (list of displayName + appId).  
-```bash 
-az ad app list --show-mine --query "[].{displayName:displayName appId:appId createdDateTime:createdDateTime}" -o tsv
-```
-> please identify in the list the app registration related to this lab (the one created in Module 0) by recognizing its displayName or its createdDateTime displayed in the output of the previous command. Then use the appId (guid only) to run the following command: 
-```
-appId=<appId from previous command>
-```
-> the appId is a guid with a format similar to this: 00000000-0000-0000-0000-000000000000
-- in the same bash session, run the following command:
-```bash
-az ad app federated-credential create --id $appId --parameters tools/deploy/module4/mod4-credential.json
-```
+11. Setup additional federated identity credential specifically for the test enviroment. 
+    1. To setup additional federated credentials identity you will need the $appId created in module 0. <br>If not saved in your session, you can retrieve the appId by looking at your App Registrations in the Azure Portal (Azure Active Directory section) or by using the AZ CLI. <br>The following command will retrieve a list of all <b>your</b> registered applications (list of displayName + appId):
+        ```bash 
+        az ad app list --show-mine --query "[].{displayName:displayName appId:appId createdDateTime:createdDateTime}" -o tsv
+        ``` 
+        > The output should contain one or more apps/rows, similar to this:
+        ```
+        VmPX6gChqC  00000000-0000-0000-0000-000000000000   2023-02-28T16:00:33Z
+        ```
+        > Note: in the sample above the appId is 00000000-0000-0000-0000-000000000000 but your appId will definitely have a different random value.
+    2. Identify in the output the app registration related to Module 0 by recognizing its displayName or its createdDateTime. <br> 
+    3. Use the appId (guid only) from the previous command to set the value of appId: 
+        ```
+        appId=<replace with appId from previous command>
+        ```
+    4. Now, in the same bash session, run the following command:
+        ```bash
+        az ad app federated-credential create --id $appId --parameters tools/deploy/module4/mod4-credential.json
+        ```
 12. Copy [mod4-lab1-deploy-test.yml](../../../tools/tools/deploy/module4/mod4-lab1-deploy-test.yml) to [.github/workflow](../../../.github/workflows/) folder.
 13. Modify [text.txt](../../../tools/deploy/module4/text.txt) file and commit & push all changes to trigger the Actions workflow.
-> The workflow is pre-configured to be triggered when any change is pushed to that specific pattern. 
+    > The workflow is pre-configured to be triggered when any change is pushed to that specific pattern. 
 14. Please monitor the execution of the workflow by navigating to "Actions":
 ![Actions](../../assets/images/module4/actions-workflow-execution.webp)
-15. Click on the workflow currently executing:
-![Actions](../../assets/images/module4/worflow-run-executing.webp)
-> Note:
-> 1. The label of the workflow run depends on the Commit message you provided when pushing the changes. 
-> 2. You may notice the status Waiting. This depends on the Environment rule we set in step 6. In fact, you will have to review and approve the workflow execution to allow the workflow to run and have permissions to the environment secrets and variables vital to the execution of the workflow. 
-> 3. If he trigger doesn't start the workflow, you can run the workflow manually by selecting the workflow and click on "Run workflow".
+15. Click on the workflow currently executing:<br><br>![Actions](../../assets/images/module4/worflow-run-executing.webp)<br><br>
+    > Note:
+    > 1. The label of the workflow run depends on the Commit message you provided when pushing the changes. 
+    > 2. You may notice the status Waiting. This depends on the Environment rule we set in step 6. In fact, you will have to review and approve the workflow execution to allow the workflow to run and have permissions to the environment secrets and variables vital to the execution of the workflow. 
+    > 3. If he trigger doesn't start the workflow, you can run the workflow manually by selecting the workflow and click on "Run workflow".
 16. Once you click on the executing workflow, you should see your running instance waiting for your Review:
 ![Manual dispatch](../../assets/images/module4/workflow-waiting-review.webp)
 17. Click on "Review deployments", confirm the checkbox in the popup and "Approve and deploy":
