@@ -86,7 +86,7 @@ appId=<appId from previous command>
 ```bash
 az ad app federated-credential create --id $appId --parameters tools/deploy/module4/mod4-credential.json
 ```
-12. Copy [mod4-lab1-deploy-test.yml](../../../tools/tools/deploy/module4/mod4-lab1-deploy-test.yml) to [github/workflow](../../../.github/workflows/) folder.
+12. Copy [mod4-lab1-deploy-test.yml](../../../tools/tools/deploy/module4/mod4-lab1-deploy-test.yml) to [.github/workflow](../../../.github/workflows/) folder.
 13. Modify [text.txt](../../../tools/deploy/module4/text.txt) file and commit & push all changes to trigger the Actions workflow.
 > The workflow is pre-configured to be triggered when any change is pushed to that specific pattern. 
 14. Please monitor the execution of the workflow by navigating to "Actions":
