@@ -71,7 +71,8 @@ az ad app list --show-mine --query "[].{displayName:displayName appId:appId crea
 
    `"subject": "repo:<your-github-username>/AKS-DevSecOps-Workshop:environment:test",`
 
-   >If you have named your new repository something other than `AKS-DevSecOps-Workshop`, you will need to replace `AKS-DevSecOps-Workshop` above with the name of your repository. Also, if your deployment branch is not `main`, you will need to replace `main` with the name of your deployment branch.
+   > If you have named your new repository something other than `AKS-DevSecOps-Workshop`, you will need to replace `AKS-DevSecOps-Workshop` above with the name of your repository. 
+   > Also, if your deployment branch is not `main`, you will need to replace `main` with the name of your deployment branch.
 
 11. Setup additional federated identity credentials specifically for the test enviroment by:
 - retrieving the appId created in module 0. <br>If not saved in your session, you can retrieve the appid specific of this lab by looking at your App Registrations in the Azure Portal (Azure Active Directory section) or by az command. The following command will retrieve a list of all your registered applications (list of displayName + appId).  
