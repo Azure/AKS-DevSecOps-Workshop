@@ -53,9 +53,9 @@ az ad app list --show-mine --query "[].{displayName:displayName appId:appId crea
         - Enter "TEST_AZURE_CONTAINER_REGISTRY" (only text - no quotes)
         - Enter the name of the Azure Container Registry deployed in your resource group(e.g.: devsecopsacr1)        
         - Click Add variable. 
-    - Repeat the previous steps to add the following enviroment variables: <br><br>
+    - Repeat the previous steps to add the following enviroment variables: 
         | YOUR_VARIABLE_NAME | Variable value |
-        |:------------------|:------------------|
+        |:-------------------|:------------------|
         | TEST_RESOURCE_GROUP | name of your resource group |
         | TEST_CLUSTER_NAME | name of your aks cluster |
         | TEST_DEPLOYMENT_MANIFEST_PATH | path to the app manifest. <br><i>Unless different in your fork, the static value to copy as value in this lab is: "tools/deploy/module4/deployment-manifest-test-sample.yaml" (only text - no quotes) </i> |
