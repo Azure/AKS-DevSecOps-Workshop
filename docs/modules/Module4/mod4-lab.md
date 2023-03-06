@@ -67,14 +67,10 @@ az ad app list --show-mine --query "[].{displayName:displayName appId:appId crea
     az aks list -g <your-resource-group> --query [].name -o tsv
     ```
 
-10. In [mod4-credential.json](../../../tools/deploy/module4/mod4-credential.json) file, replace `<your-github-username>` with your GitHub username (in your local repo).
-
-   `"subject": "repo:<your-github-username>/AKS-DevSecOps-Workshop:environment:test",`
-
+10. In [mod4-credential.json](../../../tools/deploy/module4/mod4-credential.json) file, replace `<your-github-username>` with your GitHub username (in your local repo).<br>`"subject": "repo:<your-github-username>/AKS-DevSecOps-Workshop:environment:test",`
    > If you have named your new repository something other than `AKS-DevSecOps-Workshop`, you will need to replace `AKS-DevSecOps-Workshop` above with the name of your repository. 
    > Also, if your deployment branch is not `main`, you will need to replace `main` with the name of your deployment branch.
-
-11. Setup additional federated identity credential specifically for the test enviroment. 
+10. Setup additional federated identity credential specifically for the test enviroment. 
     1. To setup additional federated credentials identity you will need the $appId created in module 0. <br>If not saved in your session, you can retrieve the appId by looking at your App Registrations in the Azure Portal (Azure Active Directory section) or by using the AZ CLI. <br>The following command will retrieve a list of all <b>your</b> registered applications (list of displayName + appId):
         ```bash 
         az ad app list --show-mine --query "[].{displayName:displayName appId:appId createdDateTime:createdDateTime}" -o tsv
