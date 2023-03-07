@@ -9,12 +9,12 @@ nav_order: 2
 
 ### Perform Static Code Analysis (SAST) 
 
-Use GitHub Advanced Security scanning capabilities for code scanning and CodeQL. Code scanning is a feature that can be used to analyze the committed code in a GitHub repository to find security vulnerabilities in your application source and also to look for any 3rd party libraries that may be exposed for security issues. The GitHub security/code scanning Any problems identified by the analysis are shown in GitHub repository dashboard along with details on remediation
+Use GitHub Security scanning capabilities for code scanning using CodeQL which is the code analysis engine developed by GitHub. Code scanning is a feature that you use to analyze the code in a GitHub repository to find security vulnerabilities and coding errors. After you enable CodeQL, GitHub Actions will execute workflow runs to scan your code and display the results as code scanning alerts. The alerts provide detailed information on the source of the issue and along with details on remediation and fixes.
 
-## Lab Module 2b - Enable GitHub code scannning on your GitHub repository 
+## Lab Module 2b - Enable GitHub code scanning on your source repository  
 &nbsp;
 
-We can use the sample vulnerable app from the earlier lab (2a) for this lab exercise as well, while the Snyk extension in the earlier lab was used for doing client side, pre-commit checks and analysis, GitHub code scanning will be used for server side checks to ensure all code committed to the remote repository is scanned for vulnerabilities.
+We can use the sample vulnerable app from the earlier lab (2a) for this lab exercise as well, while the Snyk extension in the earlier lab was used for doing client side analysis, GitHub code scanning will be used for server side checks to ensure all code committed to the remote repository is scanned for security vulnerabilities.
 
 1. In the GitHub console, enable code scanning within your git repository settings, **note** for forked repositories, its important that you first enable GitHub actions before security code scanning can be enabled as shown below.
 
@@ -32,14 +32,11 @@ We can use the sample vulnerable app from the earlier lab (2a) for this lab exer
 2. The previous step will auto generate a starter GitHub action `codeql.yml` file, we will make a small change to the `codeql.yml` to configure scanning for our sample app. Please make the following change as shown in the section below, we will comment out the Autobuild section and introduce a custom build command instead
 
    ```yaml
-      #- name: Autobuild
-      #  uses: github/codeql-action/autobuild@v2
-
        - name: Build Java
          run: |
            mvn clean package -f tools/deploy/module2/pom.xml
    ```
-       The completed `codeql.yml` should then look as follows, we will keep all the other default values.
+       The completed codeql.yml file should then look as follows, we will keep all the other default values.
 
    ![secrets scanning enable](../../assets/images/module2/codeql-change.png)
 
