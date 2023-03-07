@@ -9,7 +9,9 @@ nav_order: 3
 
 ## (Optional) Lab Module 2c - Install and configure a 'private key' detection pre-commit hook.
 
-Git pre-commit hooks allow you to check for sensitive information within your project and prevent a commit from happening if a security issue is found. The popular [pre-commit framework](https://pre-commit.com/) provides built-in hooks that can be easily configured for a specific project. The pre-commit framework is a client side component and needs to be setup on your local machine before it can be used. 
+Git pre-commit hooks allow you to check for sensitive information within your project and prevent a commit from happening if a security issue is found. The popular [pre-commit framework](https://pre-commit.com/) provides built-in hooks that can be easily configured for a specific project. The pre-commit framework is a client-side component and needs to be setup on your local machine before it can be used. 
+
+![git pre-hooks](../../assets/images/module2/pre-commit-hook-flow.png)
 
 **Note**: For Windows users, miniconda is a minimum installer package that works well and was tested for this lab exercise, you can find the install packages here -> [windows pre-commit install](https://docs.conda.io/en/latest/miniconda.html)
 
@@ -23,7 +25,6 @@ Git pre-commit hooks allow you to check for sensitive information within your pr
    ```
 
    ```shell
-      ##validate the install was successful */
       pre-commit --version
    ```
 
@@ -33,7 +34,6 @@ Git pre-commit hooks allow you to check for sensitive information within your pr
       mkdir precommit-test
       cd precommit-test
       
-      ## git initialize the project
       git init
    ```
 3. Add a simple pre-commit configuration to your git project, this config is using one git hook for detecting private keys.
@@ -106,7 +106,7 @@ Git pre-commit hooks allow you to check for sensitive information within your pr
 
 ## pre-commit hook limitations
 - The pre-commit framework is a client side framework and as such does not force developers to it's use, developers can also bypass the pre-commit checks by typing `--no-verify` during the actual commit. It is therefore essential to implement post-commit Git hooks to check for secrets, code vulnerabilities, etc. This is where GitHub enhanced security features can be implemented to ensure complete coverage of your build pipelines.
-- The built-in 'detect-private-key' hook has limited scope to private keys only, additional hooks for secrets detection such as gitguardian may be used for a more comprehensive secrets and password detection.
+- The built-in 'detect-private-key' hook has limited scope to private keys only, additional hooks for secrets detection such as git guardian may be used for a more comprehensive secrets and password detection.
 - pre-commit hooks have limited scope in general and are nor a replacement for static/dynamic analysis (SAST/DAST) or for component scanning (SCA). Use the GitHub advanced security settings to enable a more comprehensive analysis.
 
 
