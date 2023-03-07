@@ -1,0 +1,2 @@
+- package-ecosystem: "maven" # See documentation for possible values
+  directory: "/tools/deploy/module3" # Location of package manifests
