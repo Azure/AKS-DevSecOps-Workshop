@@ -67,7 +67,7 @@ az ad app list --show-mine --query "[].{displayName:displayName appId:appId crea
     az aks list -g <your-resource-group> --query [].name -o tsv
     ```
 
-10. In [mod4-credential.json](../../../tools/deploy/module4/mod4-credential.json) file, replace `<your-github-username>` with your GitHub username (in your local repo).<br>
+10. In [mod4-credential.json](../../../tools/deploy/module4/mod4-credential.json) file, replace `<your-github-username>` (or any other username/handle present there) with your GitHub username (in your local repo).<br>
     `"subject": "repo:<your-github-username>/AKS-DevSecOps-Workshop:environment:test"`,   
     > If you have named your new repository something other than `AKS-DevSecOps-Workshop`, you will need to replace `AKS-DevSecOps-Workshop` above with the name of your repository. 
     > Also, if your deployment branch is not `main`, you will need to replace `main` with the name of your deployment branch.
