@@ -11,7 +11,7 @@ Workload Identity allows pods to access Azure resources using Azure managed iden
 AAD Workload Identity for AKS integrates with the Kubernetes native capabilities to federate with any external identity providers. The feature sunsets the existing AAD Pod-Managed Identity offering and makes it easier to use and deploy, and overcome several limitations in AAD Pod-Managed Identity.
 
 This lab will perform the following work:
-- Enable Workload Identity Preview provider features on Subscription & AZ CLI preview extension
+
 - Enable OIDC Issuer and Workload Identity features on the AKS cluster
 - Create a Managed Identity in Azure
 - Create a Service Account in Kubernetes
@@ -37,26 +37,6 @@ CLUSTER_NAME=devsecops-aks
 KEYVAULT_SECRET_NAME=mysecret
 SUBSCRIPTION_ID=$(az account show --query id -o tsv)
 KEYVAULT_NAME=$(az keyvault list -g ${RG_NAME} --query "[0].name" -o tsv)
-```
-
-### Register preview providers on your subscription
-
-1. Run the following command to register the preview provider feature for Workload Identity:
-```bash
-az feature register --namespace "Microsoft.ContainerService" --name "EnableWorkloadIdentityPreview"
-```
-2. Wait for the feature to be enabled by running this command, the state should show "Registered" when complete. This may take up to 10 minutes
-```bash
-az feature show --namespace "Microsoft.ContainerService" --name "EnableWorkloadIdentityPreview"
-```
-3. Once the Workload Identity preview feature is registered, you must register the parent Microsoft.ContainerService resource provider.
-```bash
-az provider register --namespace Microsoft.ContainerService
-```
-4. Add and/or update the aks-preview extension with the Azure CLI.
-```bash
-az extension add --name aks-preview 
-az extension update --name aks-preview
 ```
 
 ### Enable ODIC and Workload Identity on the AKS Cluster
