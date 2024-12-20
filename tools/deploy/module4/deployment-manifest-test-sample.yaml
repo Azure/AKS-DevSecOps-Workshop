@@ -5,7 +5,7 @@ metadata:
 spec:
   containers:
   - name: devsecops-mod4-nginx-app
-    image: nginx:latest
+    image: acrgnvotaqtb5nrc.azurecr.io/nginx:latest
     ports:
     - containerPort: 80
     - containerPort: 443

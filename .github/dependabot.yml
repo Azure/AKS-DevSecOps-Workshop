@@ -9,3 +9,4 @@ updates:
     directory: "/tools/deploy/module3" # Location of package manifests
     schedule:
       interval: "weekly"
+    # open-pull-requests-limit: 20

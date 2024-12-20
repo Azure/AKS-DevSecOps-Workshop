@@ -32,7 +32,7 @@ jobs:
 
       # Deploy Bicep file
     - name: deploy
-      uses: azure/arm-deploy@v1
+      uses: azure/arm-deploy@v2
       with:
         subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
         resourceGroupName: ${{ secrets.CLUSTER_RESOURCE_GROUP }}
@@ -41,9 +41,10 @@ jobs:
         failOnStdErr: false
 
       # az feature register for Lab 1
-    - name: az feature register
-      run: |
-        az feature register --namespace "Microsoft.ContainerService" --name "EnableWorkloadIdentityPreview"
+    # - name: az feature register
+    #   run: |
+    #     az feature register --namespace "Microsoft.ContainerService" --name "EnableWorkloadIdentityPreview"
+    #     az provider register -n Microsoft.ContainerService
 
       # Attach ACR to AKS
     - name: attach Azure Container Registry to AKS
