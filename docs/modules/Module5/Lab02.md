@@ -11,7 +11,7 @@ Here, in this lab, as part of [Module 5: Operate and Monitor](index.md), we will
 Before attempting this lab, please be sure to complete the items described in the [Getting Started Section](General.md#getting-started).
 
 ## Azure Policy for Kubernetes
-Azure Policy is a feature of the Azure Resource Management Platform which allows organizations to define and enforce stanards across their environments.  Azure Policy for Kubernetes is a Kubernetes add-on that works with Azure Policy.  The add-on extends extends [Gatekeeper](https://github.com/open-policy-agent/gatekeeper) v3, an _admission controller webhook_ for [Open Policy Agent](https://www.openpolicyagent.org/) (OPA).  Once installed, the add-on does the following:
+Azure Policy is a feature of the Azure Resource Management Platform which allows organizations to define and enforce standards across their environments.  Azure Policy for Kubernetes is a Kubernetes add-on that works with Azure Policy.  The add-on extends extends [Gatekeeper](https://github.com/open-policy-agent/gatekeeper) v3, an _admission controller webhook_ for [Open Policy Agent](https://www.openpolicyagent.org/) (OPA).  Once installed, the add-on does the following:
 
 - Check with Azure Policy Service for policy assignments to the cluster
 - Deploys policy definitions into the cluster as [constraint template](https://open-policy-agent.github.io/gatekeeper/website/docs/howto/#constraint-templates) and [constraint](https://github.com/open-policy-agent/gatekeeper#constraints) custom resources
